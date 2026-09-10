@@ -9,20 +9,19 @@ import { cn } from "@/lib/utils";
 export function Hero() {
   return (
     <section className="relative flex min-h-[90vh] lg:min-h-screen items-center justify-center overflow-hidden pt-24 pb-20">
-      {/* Background Image with Sizzling Grill Photo */}
+      {/* Background Image with Sizzling Live Grill Charcoal Photo */}
       <div
         className="absolute inset-0 bg-cover bg-center bg-no-repeat scale-105 transition-transform duration-1000"
         style={{
-          backgroundImage:
-            "url('https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=1920&q=85')",
+          backgroundImage: "url('/images/hero-grill.jpg')",
         }}
         role="img"
-        aria-label="Flamora live grill buffet dining atmosphere"
+        aria-label="Flamora live charcoal grill and flame atmosphere"
       />
 
       {/* Multi-layered Dark Ember Gradient Overlay for Readability */}
-      <div className="absolute inset-0 bg-gradient-to-t from-flamora-charcoal via-flamora-charcoal/75 to-flamora-charcoal/60" />
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-orange-950/30 via-transparent to-black/60" />
+      <div className="absolute inset-0 bg-gradient-to-t from-flamora-charcoal via-flamora-charcoal/80 to-flamora-charcoal/65" />
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-orange-950/40 via-transparent to-black/70" />
 
       {/* Content */}
       <Container className="relative z-10 text-center">
