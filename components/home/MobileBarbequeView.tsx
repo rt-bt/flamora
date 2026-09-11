@@ -25,7 +25,7 @@ const buffetHighlights = [
     subtitle: "Signature Experience",
     desc: "Unlimited veg & non-veg grills served sizzling hot right at your table.",
     emoji: "🍢",
-    iconBg: "bg-orange-100",
+    iconBg: "bg-teal-100",
   },
   {
     id: "bigbuffet",
@@ -88,14 +88,14 @@ export function MobileBarbequeView() {
           className="absolute inset-0 bg-cover bg-center bg-no-repeat scale-105"
           style={{ backgroundImage: "url('/images/hero-grill.jpg')" }}
         />
-        {/* Rich gradient overlay — deep orange to crimson */}
-        <div className="absolute inset-0 bg-gradient-to-t from-[#7B1E00]/80 via-[#C94B2C]/30 to-[#FF6B1A]/10" />
+        {/* Teal-to-dark gradient overlay */}
+        <div className="absolute inset-0 bg-gradient-to-t from-[#003D35]/85 via-[#00796B]/25 to-transparent" />
         {/* Subtle top vignette */}
-        <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-transparent to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-b from-black/25 via-transparent to-transparent" />
 
         {/* Badge */}
         <div className="absolute top-4 left-4">
-          <span className="inline-flex items-center gap-1 bg-[#FF5722] text-white text-[11px] font-bold px-2.5 py-1 rounded-full shadow-lg shadow-orange-900/30">
+          <span className="inline-flex items-center gap-1 bg-[#00796B] text-white text-[11px] font-bold px-2.5 py-1 rounded-full shadow-lg shadow-teal-900/40">
             <Flame className="h-3 w-3 fill-white" />
             Live Grill · Unlimited Buffet
           </span>
@@ -111,7 +111,7 @@ export function MobileBarbequeView() {
 
         {/* Hero Text */}
         <div className="absolute bottom-5 left-4 right-4">
-          <p className="text-[#FFD0A0] text-[11px] font-semibold uppercase tracking-[0.15em] mb-1">
+          <p className="text-[#A7F3D0] text-[11px] font-semibold uppercase tracking-[0.15em] mb-1">
             Bihar&apos;s #1 Grill Restaurant
           </p>
           <h1 className="text-white font-extrabold text-[26px] leading-[1.15] tracking-tight drop-shadow-md">
@@ -119,7 +119,7 @@ export function MobileBarbequeView() {
           </h1>
           <button
             onClick={() => setIsBookingOpen(true)}
-            className="mt-3 inline-flex items-center gap-2 bg-[#FF5722] hover:bg-[#E64A19] text-white text-sm font-bold px-5 py-2.5 rounded-full shadow-lg shadow-orange-900/30 active:scale-95 transition-all"
+            className="mt-3 inline-flex items-center gap-2 bg-[#00796B] hover:bg-[#00695C] text-white text-sm font-bold px-5 py-2.5 rounded-full shadow-lg shadow-teal-900/40 active:scale-95 transition-all"
           >
             Book a Table
             <ArrowRight className="h-4 w-4" />
@@ -130,7 +130,7 @@ export function MobileBarbequeView() {
       {/* ══════════════════════════════════════════════
           QUICK STATS STRIP
           ══════════════════════════════════════════════ */}
-      <div className="bg-gradient-to-r from-[#FF5722] to-[#FF8C00] text-white px-4 py-3 flex items-center justify-around text-center">
+      <div className="bg-gradient-to-r from-[#00796B] to-[#D4A017] text-white px-4 py-3 flex items-center justify-around text-center">
         <div>
           <div className="text-base font-extrabold leading-none">30+</div>
           <div className="text-[10px] font-medium opacity-90 mt-0.5">Dishes</div>
@@ -185,7 +185,7 @@ export function MobileBarbequeView() {
       <div className="px-4 pb-4">
         <div className="flex items-center justify-between mb-3">
           <h2 className="text-[15px] font-bold text-[#1A1A1A]">Celebrate an occasion?</h2>
-          <span className="text-[11px] text-[#FF5722] font-semibold">Swipe →</span>
+          <span className="text-[11px] text-[#00796B] font-semibold">Swipe →</span>
         </div>
         <div className="flex gap-2.5 overflow-x-auto pb-1 no-scrollbar">
           {occasions.map((occ) => (
@@ -218,7 +218,7 @@ export function MobileBarbequeView() {
               key={item.id}
               type="button"
               onClick={() => setIsBookingOpen(true)}
-              className="flex gap-3 w-full text-left px-3.5 py-3 hover:bg-orange-50/50 transition-colors"
+              className="flex gap-3 w-full text-left px-3.5 py-3 hover:bg-teal-50/50 transition-colors"
             >
               <div className={cn("w-14 h-14 rounded-xl flex-shrink-0 flex items-center justify-center text-2xl", item.iconBg)}>
                 {item.emoji}
@@ -226,7 +226,7 @@ export function MobileBarbequeView() {
               <div className="flex-1 min-w-0 py-0.5">
                 <h3 className="text-[13px] font-bold text-[#1A1A1A] mb-0.5">{item.title}</h3>
                 <p className="text-[11px] text-[#6B7280] line-clamp-1 mb-1">{item.desc}</p>
-                <span className="text-[10px] font-semibold text-[#FF5722] bg-orange-50 px-2 py-0.5 rounded-full">
+                <span className="text-[10px] font-semibold text-[#00796B] bg-teal-50 px-2 py-0.5 rounded-full">
                   {item.subtitle}
                 </span>
               </div>
@@ -240,9 +240,9 @@ export function MobileBarbequeView() {
           BUFFET PRICE CARD — Vibrant gradient header
           ══════════════════════════════════════════════ */}
       <div className="px-4 pb-5">
-        <div className="rounded-2xl overflow-hidden shadow-md border border-orange-100">
+        <div className="rounded-2xl overflow-hidden shadow-md border border-teal-100">
           {/* Gradient Header */}
-          <div className="bg-gradient-to-r from-[#FF5722] to-[#FF8C00] px-4 py-3.5 flex items-center justify-between">
+          <div className="bg-gradient-to-r from-[#00796B] to-[#D4A017] px-4 py-3.5 flex items-center justify-between">
             <div>
               <h2 className="text-[15px] font-bold text-white">Today&apos;s Buffet Price</h2>
               <p className="text-[11px] text-white/80 mt-0.5">Unlimited food · Live grill at your table</p>
@@ -253,7 +253,7 @@ export function MobileBarbequeView() {
               <select
                 value={selectedCity}
                 onChange={(e) => setSelectedCity(e.target.value)}
-                className="bg-transparent font-bold text-white text-[11px] focus:outline-none cursor-pointer [&>option]:bg-[#FF5722] [&>option]:text-white"
+                className="bg-transparent font-bold text-white text-[11px] focus:outline-none cursor-pointer [&>option]:bg-[#00796B] [&>option]:text-white"
               >
                 {outletBuffetList.map((o) => (
                   <option key={o.outletId} value={o.city}>{o.city}</option>
@@ -272,7 +272,7 @@ export function MobileBarbequeView() {
                   className={cn(
                     "flex-1 py-2.5 text-xs font-bold transition-colors",
                     activeDayType === dt
-                      ? "bg-[#FF5722] text-white"
+                      ? "bg-[#00796B] text-white"
                       : "bg-gray-50 text-[#6B7280] hover:bg-gray-100"
                   )}
                 >
@@ -290,7 +290,7 @@ export function MobileBarbequeView() {
                   className={cn(
                     "flex-1 rounded-xl py-2 text-xs font-bold border-2 transition-all",
                     activeSession === sess
-                      ? "bg-orange-50 border-[#FF5722] text-[#FF5722]"
+                      ? "bg-teal-50 border-[#00796B] text-[#00796B]"
                       : "bg-white border-gray-200 text-[#9CA3AF]"
                   )}
                 >
@@ -329,7 +329,7 @@ export function MobileBarbequeView() {
             {/* Kids note */}
             <div className="mx-4 mb-3 bg-amber-50 rounded-xl px-3 py-2 text-center border border-amber-100">
               <p className="text-[11px] text-[#6B7280]">
-                👧 Kids (5–9 yrs): <span className="font-bold text-[#FF5722]">₹{slot?.kidsPrice}</span>
+                👧 Kids (5–9 yrs): <span className="font-bold text-[#00796B]">₹{slot?.kidsPrice}</span>
                 &nbsp;·&nbsp; Under 5 eat <span className="font-bold text-green-600">FREE</span>
               </p>
             </div>
@@ -338,7 +338,7 @@ export function MobileBarbequeView() {
             <div className="px-4 pb-4">
               <button
                 onClick={() => setIsBookingOpen(true)}
-                className="w-full bg-gradient-to-r from-[#FF5722] to-[#FF8C00] text-white rounded-2xl py-3.5 text-sm font-bold flex items-center justify-center gap-2 shadow-lg shadow-orange-200 active:scale-95 transition-all"
+                className="w-full bg-gradient-to-r from-[#00796B] to-[#D4A017] text-white rounded-2xl py-3.5 text-sm font-bold flex items-center justify-center gap-2 shadow-lg shadow-teal-200 active:scale-95 transition-all"
               >
                 Book a Table at This Rate
                 <ArrowRight className="h-4 w-4" />
@@ -355,13 +355,13 @@ export function MobileBarbequeView() {
         <h2 className="text-[17px] font-bold text-[#1A1A1A] mb-3">Our Offerings</h2>
         <div className="space-y-3">
           {/* Dine Out panel */}
-          <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-[#FF5722] to-[#FF8C00] p-5 shadow-md">
+          <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-[#00796B] to-[#D4A017] p-5 shadow-md">
             <div className="absolute -right-4 -top-4 text-[80px] opacity-10">🍢</div>
             <p className="text-[11px] font-bold uppercase tracking-widest text-white/70 mb-1">Flamora Grill</p>
             <h3 className="text-[22px] font-extrabold text-white leading-tight">Dine Out<br />With Flamora</h3>
             <button
               onClick={() => setIsBookingOpen(true)}
-              className="mt-4 inline-flex items-center gap-2 bg-white text-[#FF5722] px-4 py-2 rounded-full text-sm font-bold active:scale-95 transition-transform shadow"
+              className="mt-4 inline-flex items-center gap-2 bg-white text-[#00796B] px-4 py-2 rounded-full text-sm font-bold active:scale-95 transition-transform shadow"
             >
               Book a table <ArrowRight className="h-4 w-4" />
             </button>
@@ -388,10 +388,10 @@ export function MobileBarbequeView() {
       <div className="px-4 pb-5">
         <h2 className="text-[17px] font-bold text-[#1A1A1A] mb-3">Takeaway</h2>
         <Link href="/menu">
-          <div className="bg-gradient-to-br from-[#FFF3E0] to-[#FFE0B2] h-[130px] flex rounded-2xl items-center justify-center mb-4 border border-orange-100 active:opacity-90 transition-opacity shadow-sm">
+          <div className="bg-gradient-to-br from-[#FFF3E0] to-[#FFE0B2] h-[130px] flex rounded-2xl items-center justify-center mb-4 border border-teal-100 active:opacity-90 transition-opacity shadow-sm">
             <div className="text-center">
               <div className="text-5xl mb-2">📦</div>
-              <p className="font-bold text-[#E64A19] text-sm">Flamora Express</p>
+              <p className="font-bold text-[#00695C] text-sm">Flamora Express</p>
               <p className="text-xs text-[#6B7280]">Order Takeaway Online</p>
             </div>
           </div>
@@ -416,7 +416,7 @@ export function MobileBarbequeView() {
       <div className="px-4 pb-8">
         <div className="flex items-center justify-between mb-3">
           <h2 className="text-[17px] font-bold text-[#1A1A1A]">Our Outlets</h2>
-          <Link href="/locations" className="text-[#FF5722] text-xs font-bold">View all →</Link>
+          <Link href="/locations" className="text-[#00796B] text-xs font-bold">View all →</Link>
         </div>
         <div className="grid grid-cols-2 gap-3">
           {outletBuffetList.map((outlet) => (
@@ -427,11 +427,11 @@ export function MobileBarbequeView() {
               className="rounded-2xl border border-gray-100 bg-white p-3.5 text-left shadow-sm hover:shadow-md transition-shadow active:scale-95"
             >
               <div className="flex items-center gap-2 mb-2">
-                <div className="h-8 w-8 rounded-full bg-orange-100 flex items-center justify-center text-base">📍</div>
+                <div className="h-8 w-8 rounded-full bg-teal-100 flex items-center justify-center text-base">📍</div>
                 <p className="text-xs font-bold text-[#1A1A1A]">{outlet.city}</p>
               </div>
               <p className="text-[10px] text-[#6B7280] line-clamp-2 mb-2">{outlet.outletName}</p>
-              <span className="text-[10px] font-bold text-[#FF5722]">Book here →</span>
+              <span className="text-[10px] font-bold text-[#00796B]">Book here →</span>
             </button>
           ))}
         </div>

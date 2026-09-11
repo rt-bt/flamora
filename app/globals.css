@@ -9,13 +9,13 @@
    ========================================================================== */
 
 :root {
-  /* Brand Colors */
-  --flamora-charcoal: #17110D;
-  --flamora-red: #C94B2C;
-  --flamora-orange: #E58A3A;
-  --flamora-cream: #F7F1E8;
-  --flamora-gold: #C6A15B;
-  --flamora-text: #211A16;
+  /* Brand Colors — Flamora Signature Teal + Gold */
+  --flamora-charcoal: #0D1F1C;
+  --flamora-red: #00796B;
+  --flamora-orange: #00897B;
+  --flamora-cream: #F0FAF8;
+  --flamora-gold: #D4A017;
+  --flamora-text: #0D1F1C;
 
   /* shadcn/ui overrides mapped to Flamora palette */
   --background: oklch(0.97 0.005 80);

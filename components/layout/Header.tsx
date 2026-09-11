@@ -81,7 +81,7 @@ export function Header({ onOpenBooking }: HeaderProps) {
                 </span>
                 <ChevronDown
                   className={cn(
-                    "h-4 w-4 shrink-0 text-[#FF8C00] transition-transform duration-200",
+                    "h-4 w-4 shrink-0 text-[#D4A017] transition-transform duration-200",
                     isCityDropdownOpen ? "rotate-180" : ""
                   )}
                 />
@@ -97,7 +97,7 @@ export function Header({ onOpenBooking }: HeaderProps) {
                 {/* Dropdown Header */}
                 <div className="flex items-center justify-between px-4 py-3 border-b border-gray-100 bg-gray-50">
                   <div className="flex items-center gap-2">
-                    <MapPin className="h-4 w-4 text-[#EE5735]" />
+                    <MapPin className="h-4 w-4 text-[#00796B]" />
                     <span className="text-sm font-semibold text-[#111827]">Select Restaurant</span>
                   </div>
                   <button
@@ -125,19 +125,19 @@ export function Header({ onOpenBooking }: HeaderProps) {
                             setIsCityDropdownOpen(false);
                           }}
                           className={cn(
-                            "w-full flex items-center justify-between px-4 py-3 text-left transition-colors hover:bg-orange-50",
+                            "w-full flex items-center justify-between px-4 py-3 text-left transition-colors hover:bg-teal-50",
                             isActive ? "bg-orange-50" : ""
                           )}
                         >
                           <div>
-                            <p className={cn("text-sm font-semibold", isActive ? "text-[#EE5735]" : "text-[#111827]")}>
+                            <p className={cn("text-sm font-semibold", isActive ? "text-[#00796B]" : "text-[#111827]")}>
                               📍 {outlet.city}
                             </p>
                             <p className="text-[11px] text-[#6B7280] mt-0.5 line-clamp-1">{outlet.outletName}</p>
                             <p className="text-[10px] text-[#9CA3AF] mt-0.5 line-clamp-1">{outlet.address}</p>
                           </div>
                           {isActive && (
-                            <Check className="h-4 w-4 shrink-0 text-[#EE5735] ml-2" />
+                            <Check className="h-4 w-4 shrink-0 text-[#00796B] ml-2" />
                           )}
                         </button>
                       </li>
