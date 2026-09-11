@@ -49,7 +49,7 @@ export function Header({ onOpenBooking }: HeaderProps) {
       <header
         className={cn(
           "fixed top-0 left-0 right-0 z-[51] transition-all duration-300 lg:hidden",
-          "bg-white border-b border-[#E5E5E5] shadow-xs py-2.5"
+          "bg-[#12100E] border-b border-[#26201B] shadow-md py-2.5"
         )}
       >
         <div className="mx-auto flex items-center gap-3 px-4">
@@ -61,7 +61,7 @@ export function Header({ onOpenBooking }: HeaderProps) {
               alt="Flamora"
               width={36}
               height={32}
-              className="h-8 w-auto object-contain"
+              className="h-8 w-auto object-contain brightness-110"
               priority
             />
           </Link>
@@ -76,8 +76,8 @@ export function Header({ onOpenBooking }: HeaderProps) {
               aria-expanded={isCityDropdownOpen}
             >
               <div className="flex items-center gap-1">
-                <span className="font-semibold text-[15px] font-instrument max-w-[140px] overflow-hidden text-ellipsis whitespace-nowrap text-[#171717]">
-                  {selectedCity}
+                <span className="font-semibold text-[15px] font-instrument max-w-[140px] overflow-hidden text-ellipsis whitespace-nowrap text-white">
+                  📍 {selectedCity}
                 </span>
                 <ChevronDown
                   className={cn(
@@ -86,7 +86,7 @@ export function Header({ onOpenBooking }: HeaderProps) {
                   )}
                 />
               </div>
-              <span className="text-[11px] text-[#8A8A8A] font-instrument mt-0.5 max-w-[160px] overflow-hidden text-ellipsis whitespace-nowrap">
+              <span className="text-[11px] text-white/60 font-instrument mt-0.5 max-w-[160px] overflow-hidden text-ellipsis whitespace-nowrap">
                 {currentOutlet.outletName}
               </span>
             </button>
@@ -150,7 +150,7 @@ export function Header({ onOpenBooking }: HeaderProps) {
 
           {/* Right: User avatar icon */}
           <div className="flex items-center gap-2 shrink-0 ml-auto">
-            <div className="w-8 h-8 rounded-full bg-gray-100 border border-gray-200 flex items-center justify-center text-gray-700 overflow-hidden text-sm">
+            <div className="w-8 h-8 rounded-full bg-white/10 border border-white/20 flex items-center justify-center text-white overflow-hidden text-sm">
               👤
             </div>
           </div>
