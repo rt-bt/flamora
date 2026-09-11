@@ -18,7 +18,7 @@ export function MobileBookingDrawer({
   defaultOutletId,
 }: MobileBookingDrawerProps) {
   const [selectedOutletId, setSelectedOutletId] = useState<string>(
-    defaultOutletId || outletBuffetList[0]?.outletId || "mumbai-bandra"
+    defaultOutletId || outletBuffetList[0]?.outletId || "patna-fraser"
   );
   const [selectedDate, setSelectedDate] = useState<string>("today");
   const [selectedMeal, setSelectedMeal] = useState<"Lunch" | "Dinner">("Dinner");
