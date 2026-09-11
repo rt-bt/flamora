@@ -49,7 +49,7 @@ export function Header({ onOpenBooking }: HeaderProps) {
       <header
         className={cn(
           "fixed top-0 left-0 right-0 z-[51] transition-all duration-300 lg:hidden",
-          "bg-white border-b border-[#F0F0F0] shadow-sm py-2.5"
+          "bg-[#1A0F0A] border-b border-[#2D1F17] shadow-lg py-2.5"
         )}
       >
         <div className="mx-auto flex items-center gap-3 px-4">
@@ -76,17 +76,17 @@ export function Header({ onOpenBooking }: HeaderProps) {
               aria-expanded={isCityDropdownOpen}
             >
               <div className="flex items-center gap-0.5">
-                <span className="font-bold text-[15px] max-w-[160px] overflow-hidden text-ellipsis whitespace-nowrap leading-tight text-[#111827]">
+                <span className="font-bold text-[15px] max-w-[160px] overflow-hidden text-ellipsis whitespace-nowrap leading-tight text-white">
                   📍 {selectedCity}
                 </span>
                 <ChevronDown
                   className={cn(
-                    "h-4 w-4 shrink-0 text-[#EE5735] transition-transform duration-200",
+                    "h-4 w-4 shrink-0 text-[#FF8C00] transition-transform duration-200",
                     isCityDropdownOpen ? "rotate-180" : ""
                   )}
                 />
               </div>
-              <span className="text-[11px] text-[#8A8A8A] mt-0.5 leading-none">
+              <span className="text-[11px] text-white/50 mt-0.5 leading-none">
                 {currentOutlet.outletName}
               </span>
             </button>
@@ -150,7 +150,7 @@ export function Header({ onOpenBooking }: HeaderProps) {
 
           {/* Right: User avatar placeholder */}
           <div className="flex items-center gap-2 shrink-0 ml-auto">
-            <div className="w-8 h-8 rounded-full bg-gray-100 border border-gray-200 flex items-center justify-center text-gray-500 overflow-hidden text-sm">
+            <div className="w-8 h-8 rounded-full bg-white/10 border border-white/20 flex items-center justify-center text-white overflow-hidden text-sm">
               👤
             </div>
           </div>
