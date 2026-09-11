@@ -9,22 +9,22 @@
    ========================================================================== */
 
 :root {
-  /* Brand Colors — Flamora Signature Teal + Gold */
-  --flamora-charcoal: #0D1F1C;
-  --flamora-red: #00796B;
-  --flamora-orange: #00897B;
-  --flamora-cream: #F0FAF8;
-  --flamora-gold: #D4A017;
-  --flamora-text: #0D1F1C;
+  /* Brand Colors — Flamora Ultra-Premium Smoked Crimson & Warm Amber */
+  --flamora-charcoal: #12100E;
+  --flamora-red: #991B1B;
+  --flamora-orange: #D97706;
+  --flamora-cream: #FAF8F5;
+  --flamora-gold: #B45309;
+  --flamora-text: #1C1917;
 
   /* shadcn/ui overrides mapped to Flamora palette */
-  --background: oklch(0.97 0.005 80);
+  --background: oklch(0.98 0.005 80);
   --foreground: oklch(0.18 0.02 50);
   --card: oklch(1 0 0);
   --card-foreground: oklch(0.18 0.02 50);
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.18 0.02 50);
-  --primary: oklch(0.50 0.15 30);
+  --primary: oklch(0.40 0.18 25);
   --primary-foreground: oklch(0.98 0.005 80);
   --secondary: oklch(0.95 0.008 80);
   --secondary-foreground: oklch(0.18 0.02 50);
@@ -33,17 +33,17 @@
   --accent: oklch(0.70 0.14 65);
   --accent-foreground: oklch(0.18 0.02 50);
   --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.88 0.01 80);
-  --input: oklch(0.88 0.01 80);
-  --ring: oklch(0.50 0.15 30);
-  --radius: 0.5rem;
+  --border: oklch(0.90 0.01 80);
+  --input: oklch(0.90 0.01 80);
+  --ring: oklch(0.40 0.18 25);
+  --radius: 0.75rem;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-plus-jakarta);
-  --font-heading: var(--font-outfit);
+  --font-sans: var(--font-instrument), sans-serif;
+  --font-heading: var(--font-outfit), sans-serif;
   --color-ring: var(--ring);
   --color-input: var(--input);
   --color-border: var(--border);

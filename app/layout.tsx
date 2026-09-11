@@ -1,21 +1,21 @@
 import type { Metadata } from "next";
-import { Outfit, Plus_Jakarta_Sans } from "next/font/google";
+import { Instrument_Sans, Outfit } from "next/font/google";
 import { AppLayoutWrapper } from "@/components/layout/AppLayoutWrapper";
 import { siteConfig } from "@/config/site";
 import "./globals.css";
+
+const instrumentSans = Instrument_Sans({
+  variable: "--font-instrument",
+  subsets: ["latin"],
+  display: "swap",
+  weight: ["400", "500", "600", "700"],
+});
 
 const outfit = Outfit({
   variable: "--font-outfit",
   subsets: ["latin"],
   display: "swap",
-  weight: ["400", "500", "600", "700", "800", "900"],
-});
-
-const plusJakarta = Plus_Jakarta_Sans({
-  variable: "--font-plus-jakarta",
-  subsets: ["latin"],
-  display: "swap",
-  weight: ["400", "500", "600", "700"],
+  weight: ["400", "500", "600", "700", "800"],
 });
 
 export const metadata: Metadata = {
@@ -55,38 +55,10 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="en"
-      className={`${outfit.variable} ${plusJakarta.variable} h-full`}
+      className={`${instrumentSans.variable} ${outfit.variable} h-full`}
     >
-      <body className="min-h-full flex flex-col antialiased">
+      <body className="min-h-full flex flex-col antialiased font-sans bg-[#FAF8F5] text-[#1C1917]">
         <AppLayoutWrapper>{children}</AppLayoutWrapper>
-        {/* JSON-LD Structured Data */}
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify({
-              "@context": "https://schema.org",
-              "@type": "Restaurant",
-              name: siteConfig.restaurantName,
-              description: siteConfig.description,
-              url: siteConfig.url,
-              telephone: siteConfig.phone,
-              address: {
-                "@type": "PostalAddress",
-                streetAddress: siteConfig.address.street,
-                addressLocality: siteConfig.address.city,
-                addressRegion: siteConfig.address.state,
-                postalCode: siteConfig.address.zip,
-                addressCountry: siteConfig.address.country,
-              },
-              servesCuisine: siteConfig.servesCuisine,
-              priceRange: siteConfig.priceRange,
-              openingHours: [
-                `Mo-Su ${siteConfig.openingHours.lunch}`,
-                `Mo-Su ${siteConfig.openingHours.dinner}`,
-              ],
-            }),
-          }}
-        />
       </body>
     </html>
   );
