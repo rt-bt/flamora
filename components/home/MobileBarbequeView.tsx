@@ -201,7 +201,7 @@ export function MobileBarbequeView() {
         <div className="flex items-center justify-between mb-3">
           <div className="flex items-center gap-1.5">
             <Sparkles className="h-4 w-4 text-[#EE5735]" />
-            <h2 className="text-[15px] font-semibold font-inter text-[#111827]">
+            <h2 className="text-[15px] font-bold font-heading text-[#111827]">
               What&apos;s On BBQ (Offers &amp; Deals)
             </h2>
           </div>
