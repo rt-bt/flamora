@@ -48,10 +48,8 @@ export function Header({ onOpenBooking }: HeaderProps) {
           ═══════════════════════════════════════════════ */}
       <header
         className={cn(
-          "fixed top-0 left-0 right-0 z-[51] transition-all duration-300 lg:hidden rounded-b-2xl",
-          isScrolled
-            ? "bg-white border-b border-[#E5E5E5] shadow-sm py-2.5"
-            : "bg-white/10 backdrop-blur-sm border-b border-transparent py-2.5"
+          "fixed top-0 left-0 right-0 z-[51] transition-all duration-300 lg:hidden",
+          "bg-white border-b border-[#F0F0F0] shadow-sm py-2.5"
         )}
       >
         <div className="mx-auto flex items-center gap-3 px-4">
@@ -78,12 +76,7 @@ export function Header({ onOpenBooking }: HeaderProps) {
               aria-expanded={isCityDropdownOpen}
             >
               <div className="flex items-center gap-0.5">
-                <span
-                  className={cn(
-                    "font-bold text-[15px] max-w-[160px] overflow-hidden text-ellipsis whitespace-nowrap leading-tight",
-                    isScrolled ? "text-[#111827]" : "text-white"
-                  )}
-                >
+                <span className="font-bold text-[15px] max-w-[160px] overflow-hidden text-ellipsis whitespace-nowrap leading-tight text-[#111827]">
                   📍 {selectedCity}
                 </span>
                 <ChevronDown
