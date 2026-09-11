@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { Outfit, Plus_Jakarta_Sans } from "next/font/google";
-import { Header } from "@/components/layout/Header";
-import { Footer } from "@/components/layout/Footer";
+import { AppLayoutWrapper } from "@/components/layout/AppLayoutWrapper";
 import { siteConfig } from "@/config/site";
 import "./globals.css";
 
@@ -59,9 +58,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       className={`${outfit.variable} ${plusJakarta.variable} h-full`}
     >
       <body className="min-h-full flex flex-col antialiased">
-        <Header />
-        <main className="flex-1">{children}</main>
-        <Footer />
+        <AppLayoutWrapper>{children}</AppLayoutWrapper>
         {/* JSON-LD Structured Data */}
         <script
           type="application/ld+json"

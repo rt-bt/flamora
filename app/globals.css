@@ -103,6 +103,15 @@
    ========================================================================== */
 
 @layer utilities {
+  /* Hide scrollbar for horizontal scroll areas (like BBQ Nation occasion pills) */
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
   .scroll-reveal {
     opacity: 0;
     transform: translateY(24px);

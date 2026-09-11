@@ -1,5 +1,6 @@
 // =============================================================================
-// FLAMORA — Buffet Pricing & Outlet Data (Barbeque Nation inspired)
+// FLAMORA — Buffet Pricing & Outlet Data
+// Cities: Patna, Motihari, Muzaffarpur, Bettiah (Bihar)
 // =============================================================================
 
 export type MealTimeSlot = {
@@ -28,126 +29,101 @@ export type OutletBuffetInfo = {
 
 export const outletBuffetList: OutletBuffetInfo[] = [
   {
-    outletId: "mumbai-bandra",
-    city: "Mumbai",
-    outletName: "Flamora — Bandra West (Linking Rd)",
-    address: "123 Linking Road, Near Waterfield Junction, Bandra West, Mumbai",
-    phone: "+91 98200 11223",
+    outletId: "patna-fraser",
+    city: "Patna",
+    outletName: "Flamora — Fraser Road, Patna",
+    address: "Shop No. 12, Fraser Road, Near Dak Bungalow Chowk, Patna, Bihar – 800001",
+    phone: "+91 98350 11001",
     isLiveGrill: true,
-    specialHighlights: ["Live Table Grill", "Live Kulfi Counter", "Cocktail Bar", "Valet Parking"],
+    specialHighlights: ["Live Table Grill", "Matka Kulfi Counter", "Private Party Hall", "Free Valet Parking"],
     pricing: [
       {
         dayType: "Weekday (Mon-Fri)",
         slots: [
-          { session: "Lunch", timing: "12:00 PM – 3:30 PM", vegPrice: 699, nonVegPrice: 799, kidsPrice: 399 },
-          { session: "Dinner", timing: "6:30 PM – 11:00 PM", vegPrice: 799, nonVegPrice: 899, kidsPrice: 449 },
+          { session: "Lunch", timing: "12:00 PM – 3:30 PM", vegPrice: 599, nonVegPrice: 699, kidsPrice: 349 },
+          { session: "Dinner", timing: "6:30 PM – 11:00 PM", vegPrice: 699, nonVegPrice: 799, kidsPrice: 399 },
         ],
       },
       {
         dayType: "Weekend (Sat-Sun)",
         slots: [
-          { session: "Lunch", timing: "12:00 PM – 4:00 PM", vegPrice: 849, nonVegPrice: 949, kidsPrice: 499 },
-          { session: "Dinner", timing: "6:30 PM – 11:30 PM", vegPrice: 899, nonVegPrice: 999, kidsPrice: 549 },
+          { session: "Lunch", timing: "12:00 PM – 4:00 PM", vegPrice: 749, nonVegPrice: 849, kidsPrice: 449 },
+          { session: "Dinner", timing: "6:30 PM – 11:30 PM", vegPrice: 799, nonVegPrice: 899, kidsPrice: 499 },
         ],
       },
     ],
   },
   {
-    outletId: "delhi-cp",
-    city: "Delhi NCR",
-    outletName: "Flamora — Connaught Place (Janpath)",
-    address: "45 Janpath, Outer Circle, Connaught Place, New Delhi",
-    phone: "+91 98110 44556",
+    outletId: "motihari-club-road",
+    city: "Motihari",
+    outletName: "Flamora — Club Road, Motihari",
+    address: "Near Gandhi Smarak Bhawan, Club Road, Motihari, East Champaran, Bihar – 845401",
+    phone: "+91 98350 22002",
     isLiveGrill: true,
-    specialHighlights: ["Embedded Table Grills", "Tandoor Live Station", "Private Dining Hall", "Metro Adjacent"],
+    specialHighlights: ["Live Charcoal Grill", "Outdoor Seating", "Birthday Decoration", "Kids Zone"],
     pricing: [
       {
         dayType: "Weekday (Mon-Fri)",
         slots: [
-          { session: "Lunch", timing: "12:00 PM – 3:30 PM", vegPrice: 699, nonVegPrice: 799, kidsPrice: 399 },
-          { session: "Dinner", timing: "6:30 PM – 11:00 PM", vegPrice: 799, nonVegPrice: 899, kidsPrice: 449 },
+          { session: "Lunch", timing: "12:00 PM – 3:30 PM", vegPrice: 549, nonVegPrice: 649, kidsPrice: 299 },
+          { session: "Dinner", timing: "6:30 PM – 11:00 PM", vegPrice: 649, nonVegPrice: 749, kidsPrice: 349 },
         ],
       },
       {
         dayType: "Weekend (Sat-Sun)",
         slots: [
-          { session: "Lunch", timing: "12:00 PM – 4:00 PM", vegPrice: 849, nonVegPrice: 949, kidsPrice: 499 },
-          { session: "Dinner", timing: "6:30 PM – 11:30 PM", vegPrice: 899, nonVegPrice: 999, kidsPrice: 549 },
+          { session: "Lunch", timing: "12:00 PM – 4:00 PM", vegPrice: 699, nonVegPrice: 799, kidsPrice: 399 },
+          { session: "Dinner", timing: "6:30 PM – 11:30 PM", vegPrice: 749, nonVegPrice: 849, kidsPrice: 449 },
         ],
       },
     ],
   },
   {
-    outletId: "bangalore-indiranagar",
-    city: "Bangalore",
-    outletName: "Flamora — Indiranagar (100ft Rd)",
-    address: "78, 100 Feet Road, HAL 2nd Stage, Indiranagar, Bengaluru",
-    phone: "+91 98450 77889",
+    outletId: "muzaffarpur-brahmpura",
+    city: "Muzaffarpur",
+    outletName: "Flamora — Brahmpura, Muzaffarpur",
+    address: "Plot No. 7, Brahmpura Main Road, Near Jubilee Hotel, Muzaffarpur, Bihar – 842001",
+    phone: "+91 98350 33003",
     isLiveGrill: true,
-    specialHighlights: ["Rooftop Live Grill", "Craft Beer on Tap", "Live Dessert Bar", "DJ Nights"],
+    specialHighlights: ["Rooftop Dining", "Live Dessert Bar", "Group Party Packages", "Anniversary Decor"],
     pricing: [
       {
         dayType: "Weekday (Mon-Fri)",
         slots: [
-          { session: "Lunch", timing: "12:00 PM – 3:30 PM", vegPrice: 749, nonVegPrice: 849, kidsPrice: 429 },
-          { session: "Dinner", timing: "6:30 PM – 11:00 PM", vegPrice: 849, nonVegPrice: 949, kidsPrice: 479 },
+          { session: "Lunch", timing: "12:00 PM – 3:30 PM", vegPrice: 549, nonVegPrice: 649, kidsPrice: 299 },
+          { session: "Dinner", timing: "6:30 PM – 11:00 PM", vegPrice: 649, nonVegPrice: 749, kidsPrice: 349 },
         ],
       },
       {
         dayType: "Weekend (Sat-Sun)",
         slots: [
-          { session: "Lunch", timing: "12:00 PM – 4:00 PM", vegPrice: 899, nonVegPrice: 999, kidsPrice: 529 },
-          { session: "Dinner", timing: "6:30 PM – 11:30 PM", vegPrice: 949, nonVegPrice: 1049, kidsPrice: 579 },
+          { session: "Lunch", timing: "12:00 PM – 4:00 PM", vegPrice: 699, nonVegPrice: 799, kidsPrice: 399 },
+          { session: "Dinner", timing: "6:30 PM – 11:30 PM", vegPrice: 749, nonVegPrice: 849, kidsPrice: 449 },
         ],
       },
     ],
   },
   {
-    outletId: "hyderabad-jubilee",
-    city: "Hyderabad",
-    outletName: "Flamora — Jubilee Hills (Road 36)",
-    address: "22 Road No. 36, Near Metro Pillar 1650, Jubilee Hills, Hyderabad",
-    phone: "+91 98850 33221",
+    outletId: "bettiah-station-road",
+    city: "Bettiah",
+    outletName: "Flamora — Station Road, Bettiah",
+    address: "Station Road, Near Old Collectorate, Bettiah, West Champaran, Bihar – 845438",
+    phone: "+91 98350 44004",
     isLiveGrill: true,
-    specialHighlights: ["Authentic Dum Biryani Station", "Live Haleem & Kebabs", "Spacious Family Lounges"],
+    specialHighlights: ["Live Table Grill", "Corporate Dining", "Live Chaat Counter", "Home Delivery"],
     pricing: [
       {
         dayType: "Weekday (Mon-Fri)",
         slots: [
-          { session: "Lunch", timing: "12:00 PM – 3:30 PM", vegPrice: 699, nonVegPrice: 799, kidsPrice: 399 },
-          { session: "Dinner", timing: "6:30 PM – 11:00 PM", vegPrice: 799, nonVegPrice: 899, kidsPrice: 449 },
+          { session: "Lunch", timing: "12:00 PM – 3:30 PM", vegPrice: 499, nonVegPrice: 599, kidsPrice: 279 },
+          { session: "Dinner", timing: "6:30 PM – 11:00 PM", vegPrice: 599, nonVegPrice: 699, kidsPrice: 329 },
         ],
       },
       {
         dayType: "Weekend (Sat-Sun)",
         slots: [
-          { session: "Lunch", timing: "12:00 PM – 4:00 PM", vegPrice: 849, nonVegPrice: 949, kidsPrice: 499 },
-          { session: "Dinner", timing: "6:30 PM – 11:30 PM", vegPrice: 899, nonVegPrice: 999, kidsPrice: 549 },
-        ],
-      },
-    ],
-  },
-  {
-    outletId: "pune-koregaon",
-    city: "Pune",
-    outletName: "Flamora — Koregaon Park (North Main Rd)",
-    address: "15 North Main Road, Next to Lane 5, Koregaon Park, Pune",
-    phone: "+91 98230 66778",
-    isLiveGrill: true,
-    specialHighlights: ["Garden Seating", "Live Barbeque Pits", "Kids Play Area", "Mocktail Lounge"],
-    pricing: [
-      {
-        dayType: "Weekday (Mon-Fri)",
-        slots: [
-          { session: "Lunch", timing: "12:00 PM – 3:30 PM", vegPrice: 699, nonVegPrice: 799, kidsPrice: 399 },
-          { session: "Dinner", timing: "6:30 PM – 11:00 PM", vegPrice: 799, nonVegPrice: 899, kidsPrice: 449 },
-        ],
-      },
-      {
-        dayType: "Weekend (Sat-Sun)",
-        slots: [
-          { session: "Lunch", timing: "12:00 PM – 4:00 PM", vegPrice: 849, nonVegPrice: 949, kidsPrice: 499 },
-          { session: "Dinner", timing: "6:30 PM – 11:30 PM", vegPrice: 899, nonVegPrice: 999, kidsPrice: 549 },
+          { session: "Lunch", timing: "12:00 PM – 4:00 PM", vegPrice: 649, nonVegPrice: 749, kidsPrice: 379 },
+          { session: "Dinner", timing: "6:30 PM – 11:30 PM", vegPrice: 699, nonVegPrice: 799, kidsPrice: 429 },
         ],
       },
     ],
