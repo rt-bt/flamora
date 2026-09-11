@@ -3,13 +3,66 @@
 import { useState } from "react";
 import Link from "next/link";
 import { MobileBookingDrawer } from "@/components/booking/MobileBookingDrawer";
-import { ArrowRight, ChevronRight, MapPin } from "lucide-react";
+import { ArrowRight, ChevronRight, MapPin, Tag, Sparkles, Gift, Percent } from "lucide-react";
 import { outletBuffetList } from "@/data/buffet";
 import { cn } from "@/lib/utils";
 
 /* ────────────────────────────────────────────────────────────────────────────
-   BARBEQUE NATION EXACT DATA
+   BARBEQUE NATION PROMOTIONS DATA
 ──────────────────────────────────────────────────────────────────────────── */
+const promotions = [
+  {
+    id: "early-bird",
+    title: "Early Bird Lunch Special",
+    tag: "FLAT 15% OFF",
+    desc: "Book lunch slot between 12:00 PM – 12:30 PM and get flat 15% discount.",
+    code: "EARLY15",
+    gradient: "from-[#EE5735] via-[#E04824] to-[#C83415]",
+    icon: "🌅",
+    badgeBg: "bg-white/20 text-white",
+  },
+  {
+    id: "smiles-club",
+    title: "Smiles Club Loyalty Rewards",
+    tag: "5% CASHBACK",
+    desc: "Earn 5% Smiles Coins on every buffet bill. Redeem instantly on next visit.",
+    code: "SMILES5",
+    gradient: "from-[#6B21A8] via-[#7E22CE] to-[#9333EA]",
+    icon: "👑",
+    badgeBg: "bg-amber-300 text-purple-950 font-bold",
+  },
+  {
+    id: "birthday-cake",
+    title: "Free Sparkler Birthday Cake",
+    tag: "FREE CELEBRATION",
+    desc: "Complimentary Chef's Sparkler Cake & special team birthday celebration song!",
+    code: "PARTYCAKE",
+    gradient: "from-[#BE123C] via-[#E11D48] to-[#F43F5E]",
+    icon: "🎂",
+    badgeBg: "bg-white/20 text-white",
+  },
+  {
+    id: "corporate-feast",
+    title: "Corporate Group Offer",
+    tag: "10 + 1 FREE",
+    desc: "Book for a group of 10 employees & get 1 Buffet Ticket absolutely FREE!",
+    code: "CORP10",
+    gradient: "from-[#047857] via-[#059669] to-[#10B981]",
+    icon: "💼",
+    badgeBg: "bg-white/20 text-white",
+  },
+  {
+    id: "student-discount",
+    title: "Student Grill Feast",
+    tag: "FLAT ₹100 OFF",
+    desc: "Show your valid college/school ID card and claim ₹100 OFF per person.",
+    code: "STUDENT100",
+    gradient: "from-[#1D4ED8] via-[#2563EB] to-[#3B82F6]",
+    icon: "🎓",
+    badgeBg: "bg-white/20 text-white",
+  },
+];
+
 const occasions = [
   { label: "Birthday", emoji: "🎂" },
   { label: "Anniversary", emoji: "💍" },
@@ -113,7 +166,7 @@ export function MobileBarbequeView() {
       {/* ══════════════════════════════════════════════
           2. QUICK SERVICES 4-GRID (Barbeque Nation Exact)
           ══════════════════════════════════════════════ */}
-      <div className="py-4 px-4">
+      <div className="pt-4 pb-2 px-4">
         <div className="grid grid-cols-4 gap-2.5">
           {quickActions.map((item) => {
             const inner = (
@@ -142,7 +195,70 @@ export function MobileBarbequeView() {
       </div>
 
       {/* ══════════════════════════════════════════════
-          3. CELEBRATE AN OCCASION? (Barbeque Nation Exact)
+          3. PROMOTIONS & OFFERS — "What's On BBQ" (Barbeque Nation Exact)
+          ══════════════════════════════════════════════ */}
+      <div className="py-3 px-4">
+        <div className="flex items-center justify-between mb-3">
+          <div className="flex items-center gap-1.5">
+            <Sparkles className="h-4 w-4 text-[#EE5735]" />
+            <h2 className="text-[15px] font-semibold font-inter text-[#111827]">
+              What&apos;s On BBQ (Offers &amp; Deals)
+            </h2>
+          </div>
+          <Link href="/offers" className="text-[#EE5735] text-xs font-semibold hover:underline">
+            View All →
+          </Link>
+        </div>
+
+        {/* Horizontal Carousel Reel */}
+        <div className="flex gap-3 overflow-x-auto no-scrollbar pb-2 -mx-1 px-1">
+          {promotions.map((promo) => (
+            <div
+              key={promo.id}
+              className={cn(
+                "flex-shrink-0 w-[270px] rounded-2xl p-4 text-white shadow-sm bg-gradient-to-r relative overflow-hidden flex flex-col justify-between min-h-[145px]",
+                promo.gradient
+              )}
+            >
+              {/* Background decorative emoji */}
+              <div className="absolute right-2 -bottom-2 text-6xl opacity-20 pointer-events-none select-none">
+                {promo.icon}
+              </div>
+
+              {/* Top Header */}
+              <div>
+                <div className="flex items-center justify-between gap-2 mb-2">
+                  <span className={cn("text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider", promo.badgeBg)}>
+                    {promo.tag}
+                  </span>
+                  <span className="text-[10px] font-mono bg-black/20 text-white/90 px-2 py-0.5 rounded-md border border-white/20">
+                    Use: {promo.code}
+                  </span>
+                </div>
+                <h3 className="text-sm font-bold leading-tight drop-shadow-xs mb-1">
+                  {promo.title}
+                </h3>
+                <p className="text-[11px] text-white/90 line-clamp-2 leading-relaxed">
+                  {promo.desc}
+                </p>
+              </div>
+
+              {/* Action Button */}
+              <button
+                type="button"
+                onClick={() => setIsBookingOpen(true)}
+                className="mt-3 inline-flex items-center justify-between w-full bg-white text-[#111827] px-3 py-1.5 rounded-lg text-xs font-semibold shadow-xs active:scale-95 transition-transform"
+              >
+                <span>Claim Offer &amp; Book</span>
+                <ArrowRight className="h-3.5 w-3.5 text-[#EE5735]" />
+              </button>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* ══════════════════════════════════════════════
+          4. CELEBRATE AN OCCASION? (Barbeque Nation Exact)
           ══════════════════════════════════════════════ */}
       <div className="py-2 px-4">
         <h2 className="text-[15px] font-semibold font-inter text-[#111827] mb-3">
@@ -168,7 +284,7 @@ export function MobileBarbequeView() {
       </div>
 
       {/* ══════════════════════════════════════════════
-          4. TODAY'S BUFFET HIGHLIGHTS (Barbeque Nation Exact)
+          5. TODAY'S BUFFET HIGHLIGHTS (Barbeque Nation Exact)
           ══════════════════════════════════════════════ */}
       <div className="py-3 px-4">
         <h2 className="text-[15px] font-semibold font-inter text-[#111827] mb-3">
@@ -213,7 +329,7 @@ export function MobileBarbequeView() {
       </div>
 
       {/* ══════════════════════════════════════════════
-          5. TODAY'S BUFFET PRICE CARD (Interactive Pricing)
+          6. TODAY'S BUFFET PRICE CARD (Interactive Pricing)
           ══════════════════════════════════════════════ */}
       <div className="py-3 px-4">
         <div className="rounded-2xl border border-gray-200 bg-white shadow-xs overflow-hidden">
@@ -348,7 +464,7 @@ export function MobileBarbequeView() {
       </div>
 
       {/* ══════════════════════════════════════════════
-          6. OUR OFFERINGS (Barbeque Nation 2-Panel Exact)
+          7. OUR OFFERINGS (Barbeque Nation 2-Panel Exact)
           ══════════════════════════════════════════════ */}
       <div className="py-3 px-4">
         <h2 className="text-[17px] font-semibold font-poppins text-[#111827] mb-3">
@@ -397,7 +513,7 @@ export function MobileBarbequeView() {
       </div>
 
       {/* ══════════════════════════════════════════════
-          7. TAKEAWAY SECTION (Barbeque Nation Exact)
+          8. TAKEAWAY SECTION (Barbeque Nation Exact)
           ══════════════════════════════════════════════ */}
       <div className="py-3 px-4">
         <h2 className="text-[17px] font-semibold font-poppins text-[#111827] mb-3">
@@ -429,7 +545,7 @@ export function MobileBarbequeView() {
       </div>
 
       {/* ══════════════════════════════════════════════
-          8. OUR RESTAURANTS (Outlets in Bihar)
+          9. OUR RESTAURANTS (Outlets in Bihar)
           ══════════════════════════════════════════════ */}
       <div className="py-4 px-4 pb-8">
         <div className="flex items-center justify-between mb-3">
