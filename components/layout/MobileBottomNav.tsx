@@ -64,10 +64,10 @@ export function MobileBottomNav({ onOpenBooking }: MobileBottomNavProps) {
           const isActive = item.isActive;
           const iconEl = (
             <div className="flex flex-col items-center">
-              <span className={cn("mb-1.5", isActive ? "text-[#991B1B]" : "text-[#292929]")}>
+              <span className={cn("mb-1.5", isActive ? "text-[#EE5735]" : "text-[#292929]")}>
                 {item.icon}
               </span>
-              <p className={cn("text-xs leading-[14.4px] font-normal", isActive ? "text-[#991B1B] font-bold" : "text-[#6B7280]")}>
+              <p className={cn("text-xs leading-[14.4px] font-normal", isActive ? "text-[#EE5735] font-semibold" : "text-[#6B7280]")}>
                 {item.label}
               </p>
             </div>

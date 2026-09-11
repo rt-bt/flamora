@@ -49,12 +49,12 @@ export function Header({ onOpenBooking }: HeaderProps) {
       <header
         className={cn(
           "fixed top-0 left-0 right-0 z-[51] transition-all duration-300 lg:hidden",
-          "bg-[#1A0F0A] border-b border-[#2D1F17] shadow-lg py-2.5"
+          "bg-white border-b border-[#E5E5E5] shadow-xs py-2.5"
         )}
       >
         <div className="mx-auto flex items-center gap-3 px-4">
 
-          {/* Left: Brand logo (small, mobile size) */}
+          {/* Left: Brand logo */}
           <Link href="/" className="flex shrink-0">
             <Image
               src="/images/logo.png"
@@ -66,27 +66,27 @@ export function Header({ onOpenBooking }: HeaderProps) {
             />
           </Link>
 
-          {/* Center: City Selector — Barbeque Nation style pill button */}
+          {/* Center: City Selector */}
           <div className="flex-1 min-w-0 relative" ref={dropdownRef}>
             <button
               type="button"
               onClick={() => setIsCityDropdownOpen((prev) => !prev)}
-              className="flex flex-col items-start w-full"
+              className="flex flex-col items-start w-full text-left"
               aria-haspopup="listbox"
               aria-expanded={isCityDropdownOpen}
             >
-              <div className="flex items-center gap-0.5">
-                <span className="font-bold text-[15px] max-w-[160px] overflow-hidden text-ellipsis whitespace-nowrap leading-tight text-white">
-                  📍 {selectedCity}
+              <div className="flex items-center gap-1">
+                <span className="font-semibold text-[15px] font-instrument max-w-[140px] overflow-hidden text-ellipsis whitespace-nowrap text-[#171717]">
+                  {selectedCity}
                 </span>
                 <ChevronDown
                   className={cn(
-                    "h-4 w-4 shrink-0 text-[#D4A017] transition-transform duration-200",
+                    "h-4 w-4 shrink-0 text-[#EE5735] transition-transform duration-200",
                     isCityDropdownOpen ? "rotate-180" : ""
                   )}
                 />
               </div>
-              <span className="text-[11px] text-white/50 mt-0.5 leading-none">
+              <span className="text-[11px] text-[#8A8A8A] font-instrument mt-0.5 max-w-[160px] overflow-hidden text-ellipsis whitespace-nowrap">
                 {currentOutlet.outletName}
               </span>
             </button>
@@ -97,8 +97,8 @@ export function Header({ onOpenBooking }: HeaderProps) {
                 {/* Dropdown Header */}
                 <div className="flex items-center justify-between px-4 py-3 border-b border-gray-100 bg-gray-50">
                   <div className="flex items-center gap-2">
-                    <MapPin className="h-4 w-4 text-[#00796B]" />
-                    <span className="text-sm font-semibold text-[#111827]">Select Restaurant</span>
+                    <MapPin className="h-4 w-4 text-[#EE5735]" />
+                    <span className="text-sm font-semibold text-[#171717]">Select Restaurant</span>
                   </div>
                   <button
                     type="button"
@@ -125,19 +125,19 @@ export function Header({ onOpenBooking }: HeaderProps) {
                             setIsCityDropdownOpen(false);
                           }}
                           className={cn(
-                            "w-full flex items-center justify-between px-4 py-3 text-left transition-colors hover:bg-rose-50",
-                            isActive ? "bg-rose-50" : ""
+                            "w-full flex items-center justify-between px-4 py-3 text-left transition-colors hover:bg-orange-50",
+                            isActive ? "bg-orange-50" : ""
                           )}
                         >
                           <div>
-                            <p className={cn("text-sm font-semibold", isActive ? "text-[#991B1B]" : "text-[#111827]")}>
+                            <p className={cn("text-sm font-semibold", isActive ? "text-[#EE5735]" : "text-[#171717]")}>
                               📍 {outlet.city}
                             </p>
                             <p className="text-[11px] text-[#6B7280] mt-0.5 line-clamp-1">{outlet.outletName}</p>
                             <p className="text-[10px] text-[#9CA3AF] mt-0.5 line-clamp-1">{outlet.address}</p>
                           </div>
                           {isActive && (
-                            <Check className="h-4 w-4 shrink-0 text-[#991B1B] ml-2" />
+                            <Check className="h-4 w-4 shrink-0 text-[#EE5735] ml-2" />
                           )}
                         </button>
                       </li>
@@ -148,9 +148,9 @@ export function Header({ onOpenBooking }: HeaderProps) {
             )}
           </div>
 
-          {/* Right: User avatar placeholder */}
+          {/* Right: User avatar icon */}
           <div className="flex items-center gap-2 shrink-0 ml-auto">
-            <div className="w-8 h-8 rounded-full bg-white/10 border border-white/20 flex items-center justify-center text-white overflow-hidden text-sm">
+            <div className="w-8 h-8 rounded-full bg-gray-100 border border-gray-200 flex items-center justify-center text-gray-700 overflow-hidden text-sm">
               👤
             </div>
           </div>

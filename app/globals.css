@@ -9,41 +9,42 @@
    ========================================================================== */
 
 :root {
-  /* Brand Colors — Flamora Ultra-Premium Smoked Crimson & Warm Amber */
-  --flamora-charcoal: #12100E;
-  --flamora-red: #991B1B;
-  --flamora-orange: #D97706;
+  /* Brand Colors — Barbeque Nation Inspired Palette */
+  --flamora-charcoal: #171717;
+  --flamora-red: #EE5735;
+  --flamora-orange: #EE4824;
   --flamora-cream: #FAF8F5;
-  --flamora-gold: #B45309;
-  --flamora-text: #1C1917;
+  --flamora-gold: #D97706;
+  --flamora-text: #111827;
 
   /* shadcn/ui overrides mapped to Flamora palette */
-  --background: oklch(0.98 0.005 80);
+  --background: oklch(0.99 0.002 80);
   --foreground: oklch(0.18 0.02 50);
   --card: oklch(1 0 0);
   --card-foreground: oklch(0.18 0.02 50);
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.18 0.02 50);
-  --primary: oklch(0.40 0.18 25);
-  --primary-foreground: oklch(0.98 0.005 80);
-  --secondary: oklch(0.95 0.008 80);
+  --primary: oklch(0.55 0.22 35);
+  --primary-foreground: oklch(0.99 0 0);
+  --secondary: oklch(0.96 0.005 80);
   --secondary-foreground: oklch(0.18 0.02 50);
-  --muted: oklch(0.94 0.008 80);
+  --muted: oklch(0.95 0.005 80);
   --muted-foreground: oklch(0.50 0.02 50);
-  --accent: oklch(0.70 0.14 65);
+  --accent: oklch(0.95 0.005 80);
   --accent-foreground: oklch(0.18 0.02 50);
   --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.90 0.01 80);
-  --input: oklch(0.90 0.01 80);
-  --ring: oklch(0.40 0.18 25);
+  --border: oklch(0.90 0.005 80);
+  --input: oklch(0.90 0.005 80);
+  --ring: oklch(0.55 0.22 35);
   --radius: 0.75rem;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-instrument), sans-serif;
-  --font-heading: var(--font-outfit), sans-serif;
+  --font-sans: var(--font-inter), sans-serif;
+  --font-heading: var(--font-poppins), sans-serif;
+  --font-instrument: var(--font-instrument), sans-serif;
   --color-ring: var(--ring);
   --color-input: var(--input);
   --color-border: var(--border);

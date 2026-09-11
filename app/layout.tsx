@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Instrument_Sans, Outfit } from "next/font/google";
+import { Instrument_Sans, Inter, Poppins } from "next/font/google";
 import { AppLayoutWrapper } from "@/components/layout/AppLayoutWrapper";
 import { siteConfig } from "@/config/site";
 import "./globals.css";
@@ -11,11 +11,18 @@ const instrumentSans = Instrument_Sans({
   weight: ["400", "500", "600", "700"],
 });
 
-const outfit = Outfit({
-  variable: "--font-outfit",
+const inter = Inter({
+  variable: "--font-inter",
   subsets: ["latin"],
   display: "swap",
-  weight: ["400", "500", "600", "700", "800"],
+  weight: ["400", "500", "600", "700"],
+});
+
+const poppins = Poppins({
+  variable: "--font-poppins",
+  subsets: ["latin"],
+  display: "swap",
+  weight: ["400", "500", "600", "700"],
 });
 
 export const metadata: Metadata = {
@@ -55,9 +62,9 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="en"
-      className={`${instrumentSans.variable} ${outfit.variable} h-full`}
+      className={`${instrumentSans.variable} ${inter.variable} ${poppins.variable} h-full scroll-smooth`}
     >
-      <body className="min-h-full flex flex-col antialiased font-sans bg-[#FAF8F5] text-[#1C1917]">
+      <body className="min-h-full flex flex-col antialiased font-inter bg-[#FAF8F5] text-[#111827]">
         <AppLayoutWrapper>{children}</AppLayoutWrapper>
       </body>
     </html>
