@@ -49,7 +49,7 @@ export function Header({ onOpenBooking }: HeaderProps) {
       <header
         className={cn(
           "fixed top-0 left-0 right-0 z-[51] transition-all duration-300 lg:hidden",
-          "bg-[#12100E] border-b border-[#26201B] shadow-md py-2.5"
+          "bg-[#0D0D0C] border-b border-[#38312B] shadow-md py-2.5"
         )}
       >
         <div className="mx-auto flex items-center gap-3 px-4">
@@ -76,34 +76,34 @@ export function Header({ onOpenBooking }: HeaderProps) {
               aria-expanded={isCityDropdownOpen}
             >
               <div className="flex items-center gap-1">
-                <span className="font-semibold text-[15px] font-instrument max-w-[140px] overflow-hidden text-ellipsis whitespace-nowrap text-white">
+                <span className="font-semibold text-[15px] font-instrument max-w-[140px] overflow-hidden text-ellipsis whitespace-nowrap text-[#F3EBDD]">
                   📍 {selectedCity}
                 </span>
                 <ChevronDown
                   className={cn(
-                    "h-4 w-4 shrink-0 text-[#EE5735] transition-transform duration-200",
+                    "h-4 w-4 shrink-0 text-[#C65324] transition-transform duration-200",
                     isCityDropdownOpen ? "rotate-180" : ""
                   )}
                 />
               </div>
-              <span className="text-[11px] text-white/60 font-instrument mt-0.5 max-w-[160px] overflow-hidden text-ellipsis whitespace-nowrap">
+              <span className="text-[11px] text-[#B8AEA1] font-instrument mt-0.5 max-w-[160px] overflow-hidden text-ellipsis whitespace-nowrap">
                 {currentOutlet.outletName}
               </span>
             </button>
 
             {/* City Dropdown Panel */}
             {isCityDropdownOpen && (
-              <div className="absolute top-full left-0 mt-2 w-72 rounded-2xl bg-white shadow-2xl border border-gray-100 z-[60] overflow-hidden animate-in slide-in-from-top-2 duration-200">
+              <div className="absolute top-full left-0 mt-2 w-72 rounded-2xl bg-[#211E1A] shadow-2xl border border-[#38312B] z-[60] overflow-hidden animate-in slide-in-from-top-2 duration-200">
                 {/* Dropdown Header */}
-                <div className="flex items-center justify-between px-4 py-3 border-b border-gray-100 bg-gray-50">
+                <div className="flex items-center justify-between px-4 py-3 border-b border-[#38312B] bg-[#171513]">
                   <div className="flex items-center gap-2">
-                    <MapPin className="h-4 w-4 text-[#EE5735]" />
-                    <span className="text-sm font-semibold text-[#171717]">Select Restaurant</span>
+                    <MapPin className="h-4 w-4 text-[#C65324]" />
+                    <span className="text-sm font-semibold text-[#F3EBDD]">Select Restaurant</span>
                   </div>
                   <button
                     type="button"
                     onClick={() => setIsCityDropdownOpen(false)}
-                    className="text-gray-400 hover:text-gray-600"
+                    className="text-[#81786F] hover:text-[#F3EBDD]"
                     aria-label="Close"
                   >
                     <X className="h-4 w-4" />
@@ -125,19 +125,19 @@ export function Header({ onOpenBooking }: HeaderProps) {
                             setIsCityDropdownOpen(false);
                           }}
                           className={cn(
-                            "w-full flex items-center justify-between px-4 py-3 text-left transition-colors hover:bg-orange-50",
-                            isActive ? "bg-orange-50" : ""
+                            "w-full flex items-center justify-between px-4 py-3 text-left transition-colors hover:bg-[#2A211B]",
+                            isActive ? "bg-[#2A211B]" : ""
                           )}
                         >
                           <div>
-                            <p className={cn("text-sm font-semibold", isActive ? "text-[#EE5735]" : "text-[#171717]")}>
+                            <p className={cn("text-sm font-semibold", isActive ? "text-[#C65324]" : "text-[#F3EBDD]")}>
                               📍 {outlet.city}
                             </p>
-                            <p className="text-[11px] text-[#6B7280] mt-0.5 line-clamp-1">{outlet.outletName}</p>
-                            <p className="text-[10px] text-[#9CA3AF] mt-0.5 line-clamp-1">{outlet.address}</p>
+                            <p className="text-[11px] text-[#B8AEA1] mt-0.5 line-clamp-1">{outlet.outletName}</p>
+                            <p className="text-[10px] text-[#81786F] mt-0.5 line-clamp-1">{outlet.address}</p>
                           </div>
                           {isActive && (
-                            <Check className="h-4 w-4 shrink-0 text-[#EE5735] ml-2" />
+                            <Check className="h-4 w-4 shrink-0 text-[#C65324] ml-2" />
                           )}
                         </button>
                       </li>
@@ -150,7 +150,7 @@ export function Header({ onOpenBooking }: HeaderProps) {
 
           {/* Right: User avatar icon */}
           <div className="flex items-center gap-2 shrink-0 ml-auto">
-            <div className="w-8 h-8 rounded-full bg-white/10 border border-white/20 flex items-center justify-center text-white overflow-hidden text-sm">
+            <div className="w-8 h-8 rounded-full bg-[#211E1A] border border-[#38312B] flex items-center justify-center text-[#F3EBDD] overflow-hidden text-sm">
               👤
             </div>
           </div>

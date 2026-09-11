@@ -64,7 +64,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       lang="en"
       className={`${instrumentSans.variable} ${inter.variable} ${montserrat.variable} h-full scroll-smooth`}
     >
-      <body className="min-h-full flex flex-col antialiased font-inter bg-[#FAF8F5] text-[#111827]">
+      <body className="min-h-full flex flex-col antialiased font-inter bg-[#0D0D0C] text-[#F3EBDD]">
         <AppLayoutWrapper>{children}</AppLayoutWrapper>
       </body>
     </html>

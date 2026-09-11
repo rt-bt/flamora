@@ -57,17 +57,17 @@ export function MobileBottomNav({ onOpenBooking }: MobileBottomNavProps) {
   return (
     <div className="fixed bottom-0 left-0 right-0 z-40 block lg:hidden">
       <nav
-        className="bg-white px-5 py-3 flex items-center gap-6 justify-between shadow-[0px_-1px_6px_0px_#00000040] border-t border-gray-100"
+        className="bg-[#171513] px-5 py-3 flex items-center gap-6 justify-between border-t border-[#38312B] shadow-lg"
         aria-label="Bottom Navigation"
       >
         {navItems.map((item, idx) => {
           const isActive = item.isActive;
           const iconEl = (
             <div className="flex flex-col items-center">
-              <span className={cn("mb-1.5", isActive ? "text-[#EE5735]" : "text-[#292929]")}>
+              <span className={cn("mb-1.5", isActive ? "text-[#C65324]" : "text-[#B8AEA1]")}>
                 {item.icon}
               </span>
-              <p className={cn("text-xs leading-[14.4px] font-normal", isActive ? "text-[#EE5735] font-semibold" : "text-[#6B7280]")}>
+              <p className={cn("text-xs leading-[14.4px]", isActive ? "text-[#C65324] font-bold" : "text-[#B8AEA1] font-normal")}>
                 {item.label}
               </p>
             </div>

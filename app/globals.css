@@ -5,37 +5,46 @@
 @custom-variant dark (&:is(.dark *));
 
 /* ==========================================================================
-   FLAMORA Design System — Master Rulebook Tokens
+   FLAMORA — DARK GRILL & FIRE VISUAL IDENTITY TOKENS
    ========================================================================== */
 
 :root {
-  /* Brand Colors — Flamora Fire + Food + Human Craft */
-  --flamora-charcoal: #171412;
-  --flamora-red: #EE5735;
-  --flamora-orange: #EE4824;
-  --flamora-cream: #FAF8F5;
-  --flamora-gold: #D97706;
-  --flamora-text: #171412;
+  /* Exact Rulebook Color Tokens */
+  --flamora-obsidian: #0D0D0C;
+  --flamora-charcoal: #171513;
+  --flamora-surface: #211E1A;
+  --flamora-charred: #2A211B;
 
-  /* shadcn/ui overrides */
-  --background: oklch(0.99 0.002 80);
-  --foreground: oklch(0.18 0.02 50);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.18 0.02 50);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.18 0.02 50);
-  --primary: oklch(0.55 0.22 35);
+  --flamora-ember: #C65324;
+  --flamora-copper: #D8753D;
+  --flamora-gold: #B88A4A;
+
+  --flamora-ivory: #F3EBDD;
+  --flamora-ash: #B8AEA1;
+  --flamora-smoke: #81786F;
+
+  --flamora-border: #38312B;
+  --flamora-white: #FFFFFF;
+
+  /* shadcn/ui overrides mapped to Dark Grill Palette */
+  --background: oklch(0.12 0.005 60);
+  --foreground: oklch(0.95 0.01 70);
+  --card: oklch(0.18 0.01 60);
+  --card-foreground: oklch(0.95 0.01 70);
+  --popover: oklch(0.18 0.01 60);
+  --popover-foreground: oklch(0.95 0.01 70);
+  --primary: oklch(0.52 0.20 38);
   --primary-foreground: oklch(0.99 0 0);
-  --secondary: oklch(0.96 0.005 80);
-  --secondary-foreground: oklch(0.18 0.02 50);
-  --muted: oklch(0.95 0.005 80);
-  --muted-foreground: oklch(0.50 0.02 50);
-  --accent: oklch(0.95 0.005 80);
-  --accent-foreground: oklch(0.18 0.02 50);
+  --secondary: oklch(0.22 0.01 60);
+  --secondary-foreground: oklch(0.95 0.01 70);
+  --muted: oklch(0.22 0.01 60);
+  --muted-foreground: oklch(0.70 0.02 60);
+  --accent: oklch(0.22 0.01 60);
+  --accent-foreground: oklch(0.95 0.01 70);
   --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.90 0.005 80);
-  --input: oklch(0.90 0.005 80);
-  --ring: oklch(0.55 0.22 35);
+  --border: oklch(0.28 0.01 60);
+  --input: oklch(0.28 0.01 60);
+  --ring: oklch(0.52 0.20 38);
   --radius: 0.75rem;
 }
 
@@ -61,35 +70,37 @@
   --color-popover: var(--popover);
   --color-card-foreground: var(--card-foreground);
   --color-card: var(--card);
-  --radius-sm: calc(var(--radius) * 0.6);
-  --radius-md: calc(var(--radius) * 0.8);
-  --radius-lg: var(--radius);
-  --radius-xl: calc(var(--radius) * 1.4);
-  --radius-2xl: calc(var(--radius) * 1.8);
 
-  /* Brand color tokens */
-  --color-flamora-charcoal: #171412;
-  --color-flamora-red: #EE5735;
-  --color-flamora-orange: #EE4824;
-  --color-flamora-cream: #FAF8F5;
-  --color-flamora-gold: #D97706;
-  --color-flamora-text: #171412;
+  /* Flamora Custom Dark Token Helpers */
+  --color-flamora-obsidian: #0D0D0C;
+  --color-flamora-charcoal: #171513;
+  --color-flamora-surface: #211E1A;
+  --color-flamora-charred: #2A211B;
+  --color-flamora-ember: #C65324;
+  --color-flamora-copper: #D8753D;
+  --color-flamora-gold: #B88A4A;
+  --color-flamora-ivory: #F3EBDD;
+  --color-flamora-ash: #B8AEA1;
+  --color-flamora-smoke: #81786F;
+  --color-flamora-border: #38312B;
 }
 
 /* ==========================================================================
-   Base Styles & Responsive Overflow Protections
+   Base Styles — Dark Obsidian Background
    ========================================================================== */
 
 @layer base {
   * {
-    @apply border-border outline-ring/50;
+    @apply border-[#38312B];
   }
   html, body {
     max-width: 100vw;
     overflow-x: hidden;
+    background-color: #0D0D0C;
+    color: #F3EBDD;
   }
   body {
-    @apply bg-[#FAF8F5] text-[#171412];
+    @apply bg-[#0D0D0C] text-[#F3EBDD];
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
@@ -97,7 +108,7 @@
     @apply font-sans scroll-smooth;
   }
   h1, h2, h3, h4 {
-    @apply font-heading;
+    @apply font-heading text-[#F3EBDD];
   }
 }
 
