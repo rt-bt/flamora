@@ -1,0 +1,150 @@
+@import "tailwindcss";
+
+:root {
+  --background: #0F0F0F;
+  --foreground: #F4EBD6;
+  --flame: #FF6A24;
+  --flame-hover: #E55815;
+  --charcoal: #0F0F0F;
+  --charcoal-card: #141414;
+  --charcoal-light: #1A1A1A;
+  --cream: #F4EBD6;
+  --spice: #D62B28;
+  --golden: #FFC107;
+  --whatsapp: #25D366;
+  --whatsapp-hover: #20BA5A;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-flame: var(--flame);
+  --color-flame-hover: var(--flame-hover);
+  --color-charcoal: var(--charcoal);
+  --color-charcoal-card: var(--charcoal-card);
+  --color-charcoal-light: var(--charcoal-light);
+  --color-cream: var(--cream);
+  --color-spice: var(--spice);
+  --color-golden: var(--golden);
+  --color-whatsapp: var(--whatsapp);
+  --color-whatsapp-hover: var(--whatsapp-hover);
+
+  --font-heading: var(--font-montserrat);
+  --font-body: var(--font-poppins);
+  --font-script: var(--font-caveat);
+}
+
+html {
+  scroll-behavior: smooth;
+  color-scheme: dark;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  background-color: #0F0F0F;
+  color: #F4EBD6;
+  font-family: var(--font-poppins), sans-serif;
+  overflow-x: hidden;
+  text-rendering: optimizeLegibility;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-montserrat), sans-serif;
+  letter-spacing: -0.02em;
+}
+
+/* Luxury Craftsmanship & Tactile Elevation */
+.glass-panel {
+  background: rgba(18, 18, 18, 0.75);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+.luxury-card {
+  background: linear-gradient(180deg, #181818 0%, #121212 100%);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.7), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.luxury-card:hover {
+  border-color: rgba(255, 106, 36, 0.35);
+  box-shadow: 0 18px 40px -8px rgba(255, 106, 36, 0.22), 0 8px 20px rgba(0, 0, 0, 0.8), inset 0 1px 0 rgba(255, 106, 36, 0.2);
+  transform: translateY(-3px);
+}
+
+/* Custom glow and fiery utilities */
+.shadow-flame-sm {
+  box-shadow: 0 4px 14px 0 rgba(255, 106, 36, 0.25);
+}
+
+.shadow-flame-md {
+  box-shadow: 0 8px 24px -2px rgba(255, 106, 36, 0.35);
+}
+
+.shadow-flame-lg {
+  box-shadow: 0 16px 36px -4px rgba(255, 106, 36, 0.45);
+}
+
+.shadow-card-dark {
+  box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.7);
+}
+
+.bg-ember-pattern {
+  background-image: radial-gradient(circle at 50% 0%, rgba(255, 106, 36, 0.15) 0%, transparent 60%);
+}
+
+/* Subtle Shimmer Badge */
+@keyframes shimmer-move {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(200%); }
+}
+
+.animate-shimmer {
+  position: relative;
+  overflow: hidden;
+}
+
+.animate-shimmer::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.15), transparent);
+  animation: shimmer-move 3.5s infinite;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #0F0F0F;
+}
+::-webkit-scrollbar-thumb {
+  background: #262626;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #FF6A24;
+}
+
+/* Pulse animation for live status beacon */
+@keyframes pulse-subtle {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.85; transform: scale(1.04); }
+}
+
+.animate-pulse-subtle {
+  animation: pulse-subtle 3s ease-in-out infinite;
+}
+
+/* Tap feedback */
+button:active, a:active {
+  transform: scale(0.98);
+}
