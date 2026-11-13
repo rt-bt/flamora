@@ -25,6 +25,8 @@ import {
   Trash2,
   ExternalLink,
   AlertCircle,
+  AlertTriangle,
+  ShieldAlert,
 } from "lucide-react";
 import {
   menuCategories,
@@ -52,14 +54,14 @@ export default function MenuPage() {
   const [customerName, setCustomerName] = useState("");
   const [customerPhone, setCustomerPhone] = useState("");
   const [deliveryAddress, setDeliveryAddress] = useState("");
-  const [manualDistance, setManualDistance] = useState<"within" | "beyond">("within");
+  const [distanceZone, setDistanceZone] = useState<"within_4km" | "4_to_7km" | "beyond_7km">("within_4km");
   const [gpsCoords, setGpsCoords] = useState<{ lat: number; lng: number } | null>(null);
   const [gpsDistance, setGpsDistance] = useState<number | null>(null);
   const [locating, setLocating] = useState(false);
   const [locationError, setLocationError] = useState("");
   const [paymentMethod, setPaymentMethod] = useState<"cod" | "online">("cod");
 
-  // Flamora Outlet Coordinates: 26.647844, 84.922933
+  // Flamora Outlet Coordinates: 26.647844, 84.922933 (Marine Drive, Motihari)
   const calculateDistanceKm = (lat: number, lon: number) => {
     const OUTLET_LAT = 26.647844;
     const OUTLET_LNG = 84.922933;
@@ -76,7 +78,7 @@ export default function MenuPage() {
     return Number((R * c).toFixed(1));
   };
 
-  // Live GPS locator handler
+  // Live GPS locator handler (with 7km Geofencing logic)
   const handleGetLiveLocation = () => {
     if (typeof window === "undefined" || !navigator.geolocation) {
       setLocationError("Geolocation is not supported by your browser");
@@ -91,16 +93,18 @@ export default function MenuPage() {
         setGpsCoords({ lat, lng });
         const dist = calculateDistanceKm(lat, lng);
         setGpsDistance(dist);
-        if (dist > 4.0) {
-          setManualDistance("beyond");
+        if (dist <= 4.0) {
+          setDistanceZone("within_4km");
+        } else if (dist <= 7.0) {
+          setDistanceZone("4_to_7km");
         } else {
-          setManualDistance("within");
+          setDistanceZone("beyond_7km");
         }
         setLocating(false);
       },
       () => {
         setLocating(false);
-        setLocationError("Location permission denied. Please enter address manually.");
+        setLocationError("Location permission denied. Please select your distance zone manually.");
       },
       { enableHighAccuracy: true, timeout: 12000 }
     );
@@ -206,12 +210,22 @@ export default function MenuPage() {
     );
   }, [cartItemsDetailed]);
 
-  // Delivery charge calculation based on user rules:
-  // 1. If distance > 4 km OR order < ₹150 => Delivery charge = ₹50
-  // 2. If distance <= 4 km AND order >= ₹150 => FREE Delivery (₹0)
-  // 3. Takeaway / Pickup => ₹0
+  // Delivery charge & 7 km Geofencing calculation based on user rules:
+  // 1. Max Delivery Radius = 7.0 km (Fencing: Orders beyond 7 km are NOT allowed for delivery).
+  // 2. Zone 1 (<= 4.0 km): If subtotal >= ₹150 => FREE Delivery (₹0). If subtotal < ₹150 => ₹50 Delivery charge.
+  // 3. Zone 2 (> 4.0 km & <= 7.0 km): ₹50 Delivery charge.
+  // 4. Zone 3 (> 7.0 km): Delivery disallowed. Takeaway / Pickup is allowed.
+  // 5. Takeaway / Pickup => ₹0 delivery fee anywhere.
+  const isOutside7km =
+    distanceZone === "beyond_7km" || (gpsDistance !== null && gpsDistance > 7.0);
+
+  const isDeliveryBlocked = orderType === "delivery" && isOutside7km;
+
   const isOrderUnder150 = cartTotalPrice < 150;
-  const isBeyond4km = manualDistance === "beyond" || (gpsDistance !== null && gpsDistance > 4.0);
+  const isBetween4And7km =
+    !isOutside7km &&
+    (distanceZone === "4_to_7km" ||
+      (gpsDistance !== null && gpsDistance > 4.0 && gpsDistance <= 7.0));
 
   let deliveryFee = 0;
   let deliveryExplanation = "";
@@ -219,26 +233,27 @@ export default function MenuPage() {
   if (orderType === "takeaway") {
     deliveryFee = 0;
     deliveryExplanation = "Self Pickup (No delivery fee)";
+  } else if (isOutside7km) {
+    deliveryFee = 0;
+    deliveryExplanation = "Outside 7 km delivery radius (Delivery unavailable)";
+  } else if (isBetween4And7km) {
+    deliveryFee = 50;
+    deliveryExplanation = gpsDistance
+      ? `Distance ~${gpsDistance} km (4 km – 7 km zone: ₹50 fee)`
+      : "4 km – 7 km zone standard delivery charge";
+  } else if (isOrderUnder150) {
+    deliveryFee = 50;
+    deliveryExplanation = `Order below ₹150 minimum (Add ₹${150 - cartTotalPrice} for FREE delivery)`;
   } else {
-    if (isBeyond4km) {
-      deliveryFee = 50;
-      deliveryExplanation = gpsDistance
-        ? `Distance ~${gpsDistance} km (> 4 km fee applied)`
-        : "Beyond 4 km standard delivery charge";
-    } else if (isOrderUnder150) {
-      deliveryFee = 50;
-      deliveryExplanation = `Order below ₹150 minimum (Add ₹${150 - cartTotalPrice} for FREE delivery)`;
-    } else {
-      deliveryFee = 0;
-      deliveryExplanation = "FREE Delivery (Order is ₹150+ & within 4 km)";
-    }
+    deliveryFee = 0;
+    deliveryExplanation = "FREE Delivery (Order is ₹150+ & within 4 km)";
   }
 
   const grandTotal = cartTotalPrice + deliveryFee;
 
   // Generate WhatsApp order message with Full Receipt, Address, Live GPS Link, Delivery Fee & Payment Mode
   const generateCartWhatsAppUrl = () => {
-    if (cartItemsDetailed.length === 0) return getWhatsAppOrderUrl();
+    if (cartItemsDetailed.length === 0 || isDeliveryBlocked) return getWhatsAppOrderUrl();
 
     const itemsList = cartItemsDetailed
       .map(
@@ -253,7 +268,7 @@ export default function MenuPage() {
 
     let msg = `🔥 *NEW FLAMORA ORDER* 🔥\n`;
     msg += `---------------------------------\n`;
-    msg += `🍽️ *Order Type:* ${orderType === "delivery" ? "🛵 Home Delivery" : "🥡 Takeaway / Pickup"}\n`;
+    msg += `🍽️ *Order Type:* ${orderType === "delivery" ? "🛵 Home Delivery" : "🥡 Takeaway / Pickup (Self-Collect)"}\n`;
 
     if (customerName.trim()) {
       msg += `👤 *Customer Name:* ${customerName.trim()}\n`;
@@ -265,9 +280,12 @@ export default function MenuPage() {
     if (orderType === "delivery") {
       msg += `📍 *Delivery Address:* ${deliveryAddress.trim() || "Address on call / Shared via WhatsApp"}\n`;
       if (mapsLink) {
-        msg += `🗺️ *Live GPS Location:* ${mapsLink} ${gpsDistance ? `(~${gpsDistance} km from outlet)` : ""}\n`;
+        msg += `🗺️ *Live GPS Location:* ${mapsLink} ${gpsDistance ? `(~${gpsDistance} km from outlet • Geofence Verified <= 7 km)` : ""}\n`;
       }
-      msg += `🚚 *Delivery Zone:* ${isBeyond4km ? "Beyond 4 km (>4 km)" : "Within 4 km (Local Motihari)"}\n`;
+      const zoneText = isBetween4And7km
+        ? "4 km – 7 km Zone (₹50 Fee)"
+        : "Within 4 km Zone (Local Motihari)";
+      msg += `🚚 *Delivery Zone:* ${zoneText}\n`;
     }
 
     msg += `💳 *Payment Method:* ${paymentMethod === "cod" ? "💵 Cash on Delivery (COD)" : "📱 Online UPI / QR (Pay on Delivery)"}\n`;
@@ -349,7 +367,7 @@ export default function MenuPage() {
               <Sparkles size={14} className="text-[#FF6A24]" /> Live Charcoal Smoked
             </span>
             <span className="hidden sm:inline">•</span>
-            <span>Free Delivery Over ₹150 (Within 4 km)</span>
+            <span>Free Delivery Over ₹150 (Within 4 km) • Max 7 km Delivery Zone</span>
           </div>
         </div>
       </section>
@@ -1198,18 +1216,34 @@ export default function MenuPage() {
 
                         {/* Location Success Badge */}
                         {gpsCoords && (
-                          <div className="mt-2 p-2 rounded-lg bg-green-950/60 border border-green-500/40 text-[11px] text-green-300 flex items-center justify-between">
+                          <div
+                            className={`mt-2 p-2 rounded-lg border text-[11px] flex items-center justify-between ${
+                              gpsDistance !== null && gpsDistance > 7.0
+                                ? "bg-red-950/60 border-red-500/50 text-red-300"
+                                : "bg-green-950/60 border-green-500/40 text-green-300"
+                            }`}
+                          >
                             <span className="flex items-center gap-1.5">
-                              <Check size={13} className="text-green-400 flex-shrink-0" />
+                              {gpsDistance !== null && gpsDistance > 7.0 ? (
+                                <AlertTriangle size={13} className="text-red-400 flex-shrink-0" />
+                              ) : (
+                                <Check size={13} className="text-green-400 flex-shrink-0" />
+                              )}
                               <span>
-                                GPS Location pinned {gpsDistance ? `(~${gpsDistance} km from Flamora)` : ""}
+                                {gpsDistance !== null && gpsDistance > 7.0
+                                  ? `GPS ~${gpsDistance} km from outlet (Exceeds 7 km Geofence)`
+                                  : `GPS ~${gpsDistance} km from Flamora (Within 7 km Zone ✓)`}
                               </span>
                             </span>
                             <a
                               href={`https://maps.google.com/?q=${gpsCoords.lat},${gpsCoords.lng}`}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="text-[10px] underline text-green-200 hover:text-white flex items-center gap-0.5"
+                              className={`text-[10px] underline flex items-center gap-0.5 ${
+                                gpsDistance !== null && gpsDistance > 7.0
+                                  ? "text-red-200 hover:text-white"
+                                  : "text-green-200 hover:text-white"
+                              }`}
                             >
                               <span>View Pin</span>
                               <ExternalLink size={10} />
@@ -1225,49 +1259,90 @@ export default function MenuPage() {
                         )}
                       </div>
 
-                      {/* Distance Selector (Within 4 km vs Beyond 4 km) */}
+                      {/* Distance Selector (Within 4 km vs 4-7 km vs > 7 km) */}
                       <div className="pt-2 border-t border-white/5 space-y-1.5">
                         <div className="flex items-center justify-between text-[11px]">
                           <span className="text-gray-300 font-medium">Delivery Distance from Outlet:</span>
-                          <span className="text-[10px] text-gray-500">Marine Drive, Motihari</span>
+                          <span className="text-[10px] text-[#FF6A24] font-semibold flex items-center gap-1">
+                            <ShieldAlert size={12} />
+                            <span>Max 7 km Geofence</span>
+                          </span>
                         </div>
 
-                        <div className="grid grid-cols-2 gap-2">
+                        <div className="grid grid-cols-3 gap-1.5">
                           <button
                             type="button"
-                            onClick={() => setManualDistance("within")}
-                            className={`py-1.5 px-2 rounded-lg text-center font-heading text-[11px] transition-all cursor-pointer ${
-                              manualDistance === "within"
+                            onClick={() => setDistanceZone("within_4km")}
+                            className={`py-2 px-1.5 rounded-lg text-center font-heading text-[11px] transition-all cursor-pointer ${
+                              distanceZone === "within_4km"
                                 ? "bg-[#FF6A24] text-white font-bold shadow-sm"
                                 : "bg-white/5 hover:bg-white/10 text-gray-400 border border-white/5"
                             }`}
                           >
-                            <div>Within 4 km</div>
-                            <div className={`text-[9px] ${manualDistance === "within" ? "text-white/80" : "text-green-400"}`}>
+                            <div className="leading-tight">Within 4 km</div>
+                            <div className={`text-[9px] mt-0.5 ${distanceZone === "within_4km" ? "text-white/80" : "text-green-400"}`}>
                               {isOrderUnder150 ? "+₹50 (< ₹150)" : "FREE Delivery"}
                             </div>
                           </button>
                           <button
                             type="button"
-                            onClick={() => setManualDistance("beyond")}
-                            className={`py-1.5 px-2 rounded-lg text-center font-heading text-[11px] transition-all cursor-pointer ${
-                              manualDistance === "beyond"
+                            onClick={() => setDistanceZone("4_to_7km")}
+                            className={`py-2 px-1.5 rounded-lg text-center font-heading text-[11px] transition-all cursor-pointer ${
+                              distanceZone === "4_to_7km"
                                 ? "bg-[#FF6A24] text-white font-bold shadow-sm"
                                 : "bg-white/5 hover:bg-white/10 text-gray-400 border border-white/5"
                             }`}
                           >
-                            <div>Beyond 4 km</div>
-                            <div className={`text-[9px] ${manualDistance === "beyond" ? "text-white/80" : "text-amber-400"}`}>
-                              +₹50 Delivery Charge
+                            <div className="leading-tight">4 km – 7 km</div>
+                            <div className={`text-[9px] mt-0.5 ${distanceZone === "4_to_7km" ? "text-white/80" : "text-amber-400"}`}>
+                              +₹50 Delivery
+                            </div>
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => setDistanceZone("beyond_7km")}
+                            className={`py-2 px-1.5 rounded-lg text-center font-heading text-[11px] transition-all cursor-pointer ${
+                              distanceZone === "beyond_7km"
+                                ? "bg-red-600 text-white font-bold shadow-sm"
+                                : "bg-white/5 hover:bg-white/10 text-gray-400 border border-white/5"
+                            }`}
+                          >
+                            <div className="leading-tight">&gt; 7 km</div>
+                            <div className={`text-[9px] mt-0.5 ${distanceZone === "beyond_7km" ? "text-white/90" : "text-red-400"}`}>
+                              Pickup Only
                             </div>
                           </button>
                         </div>
 
-                        {/* Informational Tip on Delivery Rules */}
+                        {/* Informational Tip on Delivery Rules & Geofence Warning */}
                         <div className="text-[10px] text-gray-400 pt-1 leading-relaxed">
-                          {isBeyond4km ? (
+                          {isOutside7km ? (
+                            <div className="p-3 bg-red-950/60 border border-red-500/50 rounded-xl space-y-2 mt-1">
+                              <div className="flex items-start gap-2 text-red-200">
+                                <AlertTriangle size={16} className="text-red-400 flex-shrink-0 mt-0.5" />
+                                <div>
+                                  <p className="font-heading font-bold text-xs text-white">
+                                    7 km Geofence: Delivery Unavailable
+                                  </p>
+                                  <p className="text-[11px] text-red-200/90 leading-relaxed mt-0.5">
+                                    {gpsDistance
+                                      ? `Detected location is ~${gpsDistance} km away. Flamora delivers strictly within 7 km of our Marine Drive outlet to ensure food reaches sizzling hot.`
+                                      : "Flamora delivers strictly within a 7 km radius of our Marine Drive, Motihari outlet to preserve charcoal grill heat and crispiness."}
+                                  </p>
+                                </div>
+                              </div>
+                              <button
+                                type="button"
+                                onClick={() => setOrderType("takeaway")}
+                                className="w-full flex items-center justify-center gap-1.5 py-2 px-3 bg-[#FF6A24] hover:bg-[#E55815] text-white rounded-lg text-xs font-heading font-bold transition-all cursor-pointer shadow-flame-sm"
+                              >
+                                <Car size={13} />
+                                <span>Switch to Takeaway / Pickup at Outlet</span>
+                              </button>
+                            </div>
+                          ) : isBetween4And7km ? (
                             <span className="text-amber-300">
-                              ℹ️ Delivery location is beyond 4 km: standard delivery charge of ₹50 applied.
+                              ℹ️ Delivery location is in extended 4 km – 7 km zone: standard delivery charge of ₹50 applied.
                             </span>
                           ) : isOrderUnder150 ? (
                             <span className="text-amber-300">
@@ -1326,8 +1401,20 @@ export default function MenuPage() {
                     {orderType === "delivery" && (
                       <div className="flex items-center justify-between text-xs">
                         <span className="text-gray-300">Delivery Fee:</span>
-                        <span className={`font-semibold ${deliveryFee === 0 ? "text-green-400" : "text-[#FF6A24]"}`}>
-                          {deliveryFee === 0 ? "FREE" : `+₹${deliveryFee}`}
+                        <span
+                          className={`font-semibold ${
+                            isOutside7km
+                              ? "text-red-400"
+                              : deliveryFee === 0
+                              ? "text-green-400"
+                              : "text-[#FF6A24]"
+                          }`}
+                        >
+                          {isOutside7km
+                            ? "Unavailable (> 7 km)"
+                            : deliveryFee === 0
+                            ? "FREE"
+                            : `+₹${deliveryFee}`}
                         </span>
                       </div>
                     )}
@@ -1351,19 +1438,41 @@ export default function MenuPage() {
             {/* 3. Sticky Bottom CTA */}
             {cartItemsDetailed.length > 0 && (
               <div className="p-4 border-t border-white/10 bg-[#161616] space-y-2 flex-shrink-0">
-                <a
-                  href={generateCartWhatsAppUrl()}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="w-full flex items-center justify-center gap-2 bg-[#25D366] hover:bg-[#20BA5A] text-white py-3.5 px-4 rounded-xl font-heading font-semibold text-sm shadow-[0_4px_16px_rgba(37,211,102,0.4)] transition-all active:scale-[0.99]"
-                >
-                  <MessageCircle size={18} />
-                  <span>Send Platter Order on WhatsApp • ₹{grandTotal}</span>
-                </a>
+                {isDeliveryBlocked ? (
+                  <div className="space-y-2">
+                    <div className="w-full flex items-center justify-center gap-2 bg-red-950/70 border border-red-500/40 text-red-300 py-3 px-4 rounded-xl font-heading font-semibold text-xs text-center">
+                      <AlertTriangle size={15} className="text-red-400 flex-shrink-0" />
+                      <span>Delivery Unavailable Beyond 7 km Radius</span>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => setOrderType("takeaway")}
+                      className="w-full flex items-center justify-center gap-2 bg-[#FF6A24] hover:bg-[#E55815] text-white py-3.5 px-4 rounded-xl font-heading font-bold text-sm shadow-flame-sm transition-all cursor-pointer active:scale-[0.99]"
+                    >
+                      <Car size={16} />
+                      <span>Switch to Takeaway / Pickup at Outlet</span>
+                    </button>
+                    <p className="text-[10px] text-center text-gray-400">
+                      Takeaway orders are prepared fresh for self-pickup at Marine Drive, Motihari.
+                    </p>
+                  </div>
+                ) : (
+                  <>
+                    <a
+                      href={generateCartWhatsAppUrl()}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="w-full flex items-center justify-center gap-2 bg-[#25D366] hover:bg-[#20BA5A] text-white py-3.5 px-4 rounded-xl font-heading font-semibold text-sm shadow-[0_4px_16px_rgba(37,211,102,0.4)] transition-all active:scale-[0.99]"
+                    >
+                      <MessageCircle size={18} />
+                      <span>Send Platter Order on WhatsApp • ₹{grandTotal}</span>
+                    </a>
 
-                <p className="text-[10px] text-center text-gray-400">
-                  Pre-fills all items, address, live GPS location &amp; payment mode into WhatsApp for instant confirmation.
-                </p>
+                    <p className="text-[10px] text-center text-gray-400">
+                      Pre-fills all items, address, live GPS location &amp; payment mode into WhatsApp for instant confirmation.
+                    </p>
+                  </>
+                )}
               </div>
             )}
           </div>
