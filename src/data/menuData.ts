@@ -396,7 +396,7 @@ export const menuItems: MenuItem[] = [
     spiceLevel: 1,
     description: "Refreshing, crisp Pepsi cola served ice-cold.",
     portion: "250ml Can / Bottle",
-    image: "/images/pepsi-drink.jpg",
+    image: "/images/flamora-pepsi.jpg",
     tags: ["Chilled"],
   },
   {
