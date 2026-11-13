@@ -135,7 +135,7 @@ export const menuItems: MenuItem[] = [
     spiceLevel: 1,
     description: "Golden crackling crispy fried chicken double-breaded in Flamora secret herbs & spice flour. Crunchy on the outside, juicy on the inside. Select your piece count below.",
     portion: "1 Large Piece · Serves 1",
-    image: "/images/crispy-chicken-4pc.jpg",
+    image: "/images/crispy-chicken.jpg",
     tags: ["Bestseller", "Golden Crunch", "Custom Pieces"],
     variants: [
       {
