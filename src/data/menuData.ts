@@ -94,7 +94,7 @@ export const menuItems: MenuItem[] = [
     spiceLevel: 2,
     description: "Delicately minced chicken kneaded with fresh mint, chopped coriander, roasted spices, and ginger slivers, roasted on seekh rods over red-hot coals.",
     portion: "4 Long Skewers · Serves 1-2",
-    image: "/images/chicken-seekh-kebab.jpg",
+    image: "/images/flamora-seekh-kebab.jpg",
     tags: ["Melt in Mouth", "Charcoal Smoked"],
   },
   {
