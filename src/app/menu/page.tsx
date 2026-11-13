@@ -15,6 +15,16 @@ import {
   Users,
   User,
   Sparkles,
+  MapPin,
+  Navigation,
+  CreditCard,
+  Banknote,
+  Bike,
+  Car,
+  Loader2,
+  Trash2,
+  ExternalLink,
+  AlertCircle,
 } from "lucide-react";
 import {
   menuCategories,
@@ -23,7 +33,6 @@ import {
   MenuItem,
 } from "@/data/menuData";
 import {
-  getWhatsAppItemUrl,
   getWhatsAppOrderUrl,
 } from "@/config/siteConfig";
 
@@ -37,6 +46,65 @@ export default function MenuPage() {
   const [selectedVariants, setSelectedVariants] = useState<{ [itemId: string]: string }>({
     "crispy-chicken": "crispy-chicken-1pc",
   });
+
+  // Interactive Checkout Drawer State
+  const [orderType, setOrderType] = useState<"delivery" | "takeaway">("delivery");
+  const [customerName, setCustomerName] = useState("");
+  const [customerPhone, setCustomerPhone] = useState("");
+  const [deliveryAddress, setDeliveryAddress] = useState("");
+  const [manualDistance, setManualDistance] = useState<"within" | "beyond">("within");
+  const [gpsCoords, setGpsCoords] = useState<{ lat: number; lng: number } | null>(null);
+  const [gpsDistance, setGpsDistance] = useState<number | null>(null);
+  const [locating, setLocating] = useState(false);
+  const [locationError, setLocationError] = useState("");
+  const [paymentMethod, setPaymentMethod] = useState<"cod" | "online">("cod");
+
+  // Flamora Outlet Coordinates: 26.647844, 84.922933
+  const calculateDistanceKm = (lat: number, lon: number) => {
+    const OUTLET_LAT = 26.647844;
+    const OUTLET_LNG = 84.922933;
+    const R = 6371; // km
+    const dLat = ((lat - OUTLET_LAT) * Math.PI) / 180;
+    const dLon = ((lon - OUTLET_LNG) * Math.PI) / 180;
+    const a =
+      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+      Math.cos((OUTLET_LAT * Math.PI) / 180) *
+        Math.cos((lat * Math.PI) / 180) *
+        Math.sin(dLon / 2) *
+        Math.sin(dLon / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    return Number((R * c).toFixed(1));
+  };
+
+  // Live GPS locator handler
+  const handleGetLiveLocation = () => {
+    if (typeof window === "undefined" || !navigator.geolocation) {
+      setLocationError("Geolocation is not supported by your browser");
+      return;
+    }
+    setLocating(true);
+    setLocationError("");
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const lat = Number(position.coords.latitude.toFixed(6));
+        const lng = Number(position.coords.longitude.toFixed(6));
+        setGpsCoords({ lat, lng });
+        const dist = calculateDistanceKm(lat, lng);
+        setGpsDistance(dist);
+        if (dist > 4.0) {
+          setManualDistance("beyond");
+        } else {
+          setManualDistance("within");
+        }
+        setLocating(false);
+      },
+      () => {
+        setLocating(false);
+        setLocationError("Location permission denied. Please enter address manually.");
+      },
+      { enableHighAccuracy: true, timeout: 12000 }
+    );
+  };
 
   // Helper to get active variant for an item
   const getActiveVariant = (item: MenuItem) => {
@@ -66,6 +134,14 @@ export default function MenuPage() {
   };
 
   const clearCart = () => setCart({});
+
+  // Quick Order button handler (opens drawer with item ready for address/COD checkout)
+  const handleQuickOrder = (id: string) => {
+    if (!cart[id]) {
+      addToCart(id);
+    }
+    setCartOpen(true);
+  };
 
   // Cart totals calculation (supports standalone items, variant items, and combos)
   const cartItemsDetailed = useMemo(() => {
@@ -130,14 +206,83 @@ export default function MenuPage() {
     );
   }, [cartItemsDetailed]);
 
-  // Generate WhatsApp custom order link for multi-item platter
+  // Delivery charge calculation based on user rules:
+  // 1. If distance > 4 km OR order < ₹150 => Delivery charge = ₹50
+  // 2. If distance <= 4 km AND order >= ₹150 => FREE Delivery (₹0)
+  // 3. Takeaway / Pickup => ₹0
+  const isOrderUnder150 = cartTotalPrice < 150;
+  const isBeyond4km = manualDistance === "beyond" || (gpsDistance !== null && gpsDistance > 4.0);
+
+  let deliveryFee = 0;
+  let deliveryExplanation = "";
+
+  if (orderType === "takeaway") {
+    deliveryFee = 0;
+    deliveryExplanation = "Self Pickup (No delivery fee)";
+  } else {
+    if (isBeyond4km) {
+      deliveryFee = 50;
+      deliveryExplanation = gpsDistance
+        ? `Distance ~${gpsDistance} km (> 4 km fee applied)`
+        : "Beyond 4 km standard delivery charge";
+    } else if (isOrderUnder150) {
+      deliveryFee = 50;
+      deliveryExplanation = `Order below ₹150 minimum (Add ₹${150 - cartTotalPrice} for FREE delivery)`;
+    } else {
+      deliveryFee = 0;
+      deliveryExplanation = "FREE Delivery (Order is ₹150+ & within 4 km)";
+    }
+  }
+
+  const grandTotal = cartTotalPrice + deliveryFee;
+
+  // Generate WhatsApp order message with Full Receipt, Address, Live GPS Link, Delivery Fee & Payment Mode
   const generateCartWhatsAppUrl = () => {
     if (cartItemsDetailed.length === 0) return getWhatsAppOrderUrl();
+
     const itemsList = cartItemsDetailed
-      .map((item) => `• ${item.name} x${item.quantity} (₹${item.price * item.quantity})`)
+      .map(
+        (item) =>
+          `• ${item.name} x${item.quantity} = ₹${item.price * item.quantity}`
+      )
       .join("\n");
-    const message = `Hi Flamora! I would like to place an order from your menu:\n\n${itemsList}\n\n*Total Amount: ₹${cartTotalPrice}*\nPlease confirm order and delivery time.`;
-    return getWhatsAppOrderUrl(message);
+
+    const mapsLink = gpsCoords
+      ? `https://maps.google.com/?q=${gpsCoords.lat},${gpsCoords.lng}`
+      : null;
+
+    let msg = `🔥 *NEW FLAMORA ORDER* 🔥\n`;
+    msg += `---------------------------------\n`;
+    msg += `🍽️ *Order Type:* ${orderType === "delivery" ? "🛵 Home Delivery" : "🥡 Takeaway / Pickup"}\n`;
+
+    if (customerName.trim()) {
+      msg += `👤 *Customer Name:* ${customerName.trim()}\n`;
+    }
+    if (customerPhone.trim()) {
+      msg += `📞 *Customer Phone:* ${customerPhone.trim()}\n`;
+    }
+
+    if (orderType === "delivery") {
+      msg += `📍 *Delivery Address:* ${deliveryAddress.trim() || "Address on call / Shared via WhatsApp"}\n`;
+      if (mapsLink) {
+        msg += `🗺️ *Live GPS Location:* ${mapsLink} ${gpsDistance ? `(~${gpsDistance} km from outlet)` : ""}\n`;
+      }
+      msg += `🚚 *Delivery Zone:* ${isBeyond4km ? "Beyond 4 km (>4 km)" : "Within 4 km (Local Motihari)"}\n`;
+    }
+
+    msg += `💳 *Payment Method:* ${paymentMethod === "cod" ? "💵 Cash on Delivery (COD)" : "📱 Online UPI / QR (Pay on Delivery)"}\n`;
+    msg += `---------------------------------\n`;
+    msg += `📋 *ORDER ITEMS:*\n${itemsList}\n`;
+    msg += `---------------------------------\n`;
+    msg += `💰 *Items Subtotal:* ₹${cartTotalPrice}\n`;
+    if (orderType === "delivery") {
+      msg += `🚚 *Delivery Fee:* ${deliveryFee === 0 ? "FREE" : `₹${deliveryFee}`} (${deliveryExplanation})\n`;
+    }
+    msg += `🔥 *GRAND TOTAL:* ₹${grandTotal}\n`;
+    msg += `---------------------------------\n`;
+    msg += `Please confirm order preparation and dispatch time!`;
+
+    return getWhatsAppOrderUrl(msg);
   };
 
   // Filtered menu items
@@ -191,7 +336,7 @@ export default function MenuPage() {
             Our Menu &amp; Combos
           </h1>
           <p className="text-xs sm:text-base text-[#F4EBD6]/80 max-w-2xl mx-auto leading-relaxed">
-            Live charcoal flame grills, golden crispy fried specials, signature combos, sides &amp; ice-cold drinks. Order directly on WhatsApp for express live kitchen preparation.
+            Live charcoal flame grills, golden crispy fried specials, signature combos, sides &amp; ice-cold drinks. Order directly on WhatsApp with address, live location &amp; COD options.
           </p>
 
           {/* Quick Stats Pill */}
@@ -204,7 +349,7 @@ export default function MenuPage() {
               <Sparkles size={14} className="text-[#FF6A24]" /> Live Charcoal Smoked
             </span>
             <span className="hidden sm:inline">•</span>
-            <span>Made Fresh to Order</span>
+            <span>Free Delivery Over ₹150 (Within 4 km)</span>
           </div>
         </div>
       </section>
@@ -241,7 +386,7 @@ export default function MenuPage() {
               <div className="inline-flex rounded-full bg-[#181818] p-1 border border-white/10 flex-shrink-0 text-xs">
                 <button
                   onClick={() => setVegFilter("all")}
-                  className={`px-2.5 sm:px-3 py-1 rounded-full font-semibold transition-colors ${
+                  className={`px-2.5 sm:px-3 py-1 rounded-full font-semibold transition-colors cursor-pointer ${
                     vegFilter === "all" ? "bg-white/20 text-white" : "text-gray-400"
                   }`}
                 >
@@ -249,7 +394,7 @@ export default function MenuPage() {
                 </button>
                 <button
                   onClick={() => setVegFilter("veg")}
-                  className={`flex items-center gap-1 px-2.5 sm:px-3 py-1 rounded-full font-semibold transition-colors ${
+                  className={`flex items-center gap-1 px-2.5 sm:px-3 py-1 rounded-full font-semibold transition-colors cursor-pointer ${
                     vegFilter === "veg" ? "bg-green-600/30 text-green-400" : "text-gray-400"
                   }`}
                 >
@@ -258,7 +403,7 @@ export default function MenuPage() {
                 </button>
                 <button
                   onClick={() => setVegFilter("non-veg")}
-                  className={`flex items-center gap-1 px-2.5 sm:px-3 py-1 rounded-full font-semibold transition-colors ${
+                  className={`flex items-center gap-1 px-2.5 sm:px-3 py-1 rounded-full font-semibold transition-colors cursor-pointer ${
                     vegFilter === "non-veg" ? "bg-red-600/30 text-red-400" : "text-gray-400"
                   }`}
                 >
@@ -395,7 +540,7 @@ export default function MenuPage() {
                       </div>
                     </div>
 
-                    {/* Interactive Piece Selector (if item has variants like Crispy Chicken 1, 2, 4, 6 Pc) */}
+                    {/* Interactive Piece Selector (for Crispy Chicken 1, 2, 4, 6 Pc) */}
                     {item.variants && item.variants.length > 0 && (
                       <div className="bg-black/50 p-2 rounded-xl border border-white/5 space-y-1">
                         <div className="flex items-center justify-between text-[10px] font-heading">
@@ -449,17 +594,15 @@ export default function MenuPage() {
                       </div>
 
                       <div className="flex items-center gap-2">
-                        {/* Direct WhatsApp Order */}
-                        <a
-                          href={getWhatsAppItemUrl(currentItemName, currentPrice)}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="flex items-center gap-1 bg-[#25D366]/20 text-[#25D366] hover:bg-[#25D366] hover:text-white px-2.5 py-1 rounded-full text-[11px] font-heading font-semibold transition-colors"
-                          title="Order on WhatsApp"
+                        {/* Quick Order (Opens Platter Drawer for address, location & COD options) */}
+                        <button
+                          onClick={() => handleQuickOrder(currentCartId)}
+                          className="flex items-center gap-1 bg-[#25D366]/20 text-[#25D366] hover:bg-[#25D366] hover:text-white px-2.5 py-1 rounded-full text-[11px] font-heading font-semibold transition-colors cursor-pointer"
+                          title="Order with Address & Location"
                         >
                           <MessageCircle size={13} />
                           <span>Order</span>
-                        </a>
+                        </button>
 
                         {/* Platter Box Counter */}
                         {inCartQty > 0 ? (
@@ -675,16 +818,14 @@ export default function MenuPage() {
                         </div>
                       </div>
 
-                      {/* Direct Single Item WhatsApp Order Button */}
-                      <a
-                        href={getWhatsAppItemUrl(currentItemName, currentPrice)}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="w-full flex items-center justify-center gap-2 bg-[#25D366]/15 hover:bg-[#25D366] text-[#25D366] hover:text-white border border-[#25D366]/30 py-2 px-3 rounded-xl text-xs font-heading font-semibold transition-all duration-300"
+                      {/* Direct Single Item WhatsApp Order Button -> Opens Drawer with Address & Location */}
+                      <button
+                        onClick={() => handleQuickOrder(currentCartId)}
+                        className="w-full flex items-center justify-center gap-2 bg-[#25D366]/15 hover:bg-[#25D366] text-[#25D366] hover:text-white border border-[#25D366]/30 py-2 px-3 rounded-xl text-xs font-heading font-semibold transition-all duration-300 cursor-pointer"
                       >
                         <MessageCircle size={14} />
                         <span>Order on WhatsApp</span>
-                      </a>
+                      </button>
                     </div>
                   </div>
                 );
@@ -846,16 +987,14 @@ export default function MenuPage() {
                           </button>
                         )}
 
-                        {/* Direct Order WhatsApp */}
-                        <a
-                          href={getWhatsAppItemUrl(combo.title, combo.price)}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="inline-flex items-center gap-1.5 bg-[#25D366] hover:bg-[#20BA5A] text-white px-4 py-2 rounded-full font-heading font-semibold text-xs transition-colors shadow-sm"
+                        {/* Direct Order WhatsApp -> Opens Drawer with Checkout Details */}
+                        <button
+                          onClick={() => handleQuickOrder(combo.id)}
+                          className="inline-flex items-center gap-1.5 bg-[#25D366] hover:bg-[#20BA5A] text-white px-4 py-2 rounded-full font-heading font-semibold text-xs transition-colors shadow-sm cursor-pointer"
                         >
                           <MessageCircle size={14} />
                           <span>Order Combo</span>
-                        </a>
+                        </button>
                       </div>
                     </div>
                   </div>
@@ -867,100 +1006,363 @@ export default function MenuPage() {
       </section>
 
       {/* =========================================================================
-          PLATTER TRAY / MULTI-ITEM ORDER SLIDE-OVER DRAWER
+          PLATTER TRAY / MULTI-ITEM ORDER & COMPLETE CHECKOUT DRAWER
       ========================================================================= */}
       {cartOpen && (
         <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex justify-end animate-fadeIn">
-          <div className="w-full max-w-md bg-[#141414] border-l border-white/10 h-full p-6 flex flex-col justify-between shadow-2xl">
-            <div>
-              <div className="flex items-center justify-between pb-4 border-b border-white/10">
-                <div className="flex items-center gap-2">
-                  <ShoppingBag size={20} className="text-[#FF6A24]" />
-                  <h3 className="font-heading font-bold text-lg text-white">
-                    Your Flamora Platter Box
-                  </h3>
+          <div className="w-full max-w-md bg-[#141414] border-l border-white/10 h-full flex flex-col justify-between shadow-2xl">
+            {/* 1. Header (Fixed Top) */}
+            <div className="p-5 pb-3 border-b border-white/10 flex items-center justify-between flex-shrink-0 bg-[#161616]">
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 rounded-lg bg-[#FF6A24]/15 border border-[#FF6A24]/30 flex items-center justify-center text-[#FF6A24]">
+                  <ShoppingBag size={18} />
                 </div>
-                <button
-                  onClick={() => setCartOpen(false)}
-                  className="text-gray-400 hover:text-white p-1 cursor-pointer"
-                >
-                  <X size={20} />
-                </button>
+                <div>
+                  <h3 className="font-heading font-bold text-base text-white">
+                    Flamora Platter Box
+                  </h3>
+                  <p className="text-[11px] text-[#FFC107]">
+                    {cartTotalCount} {cartTotalCount === 1 ? "item" : "items"} selected
+                  </p>
+                </div>
               </div>
+              <button
+                onClick={() => setCartOpen(false)}
+                className="text-gray-400 hover:text-white p-1.5 rounded-full hover:bg-white/10 transition-colors cursor-pointer"
+                aria-label="Close"
+              >
+                <X size={20} />
+              </button>
+            </div>
 
+            {/* 2. Scrollable Middle Body */}
+            <div className="flex-1 overflow-y-auto p-5 space-y-5 text-xs text-[#F4EBD6]">
               {cartItemsDetailed.length === 0 ? (
-                <div className="py-16 text-center text-gray-400">
-                  <p className="text-sm">Your platter is empty.</p>
-                  <p className="text-xs mt-1 text-gray-500">
-                    Click the &ldquo;+&rdquo; button on any menu item or combo to build your feast.
+                <div className="py-20 text-center text-gray-400 space-y-2">
+                  <ShoppingBag size={42} className="mx-auto text-gray-600 mb-2" />
+                  <p className="text-sm font-semibold text-white">Your platter is empty</p>
+                  <p className="text-xs text-gray-500 max-w-xs mx-auto">
+                    Click the &ldquo;+&rdquo; or &ldquo;Order&rdquo; button on any dish or combo to build your feast.
                   </p>
                 </div>
               ) : (
-                <div className="mt-4 space-y-3 max-h-[50vh] overflow-y-auto pr-1">
-                  {cartItemsDetailed.map((item) => (
-                    <div
-                      key={item.id}
-                      className="flex items-center justify-between p-3 bg-white/5 rounded-xl border border-white/5"
-                    >
-                      <div className="min-w-0 flex-1 mr-2">
-                        <p className="text-sm font-semibold text-white truncate">{item.name}</p>
-                        <p className="text-xs text-[#FF6A24]">₹{item.price} each</p>
+                <>
+                  {/* Cart Items List */}
+                  <div className="space-y-2.5">
+                    <div className="flex items-center justify-between pb-1 border-b border-white/5">
+                      <span className="font-heading font-bold text-xs uppercase tracking-wider text-[#FF6A24]">
+                        Selected Dishes &amp; Combos
+                      </span>
+                      <button
+                        onClick={clearCart}
+                        className="text-[11px] text-gray-400 hover:text-red-400 flex items-center gap-1 transition-colors cursor-pointer"
+                      >
+                        <Trash2 size={12} />
+                        <span>Clear All</span>
+                      </button>
+                    </div>
+
+                    <div className="space-y-2">
+                      {cartItemsDetailed.map((item) => (
+                        <div
+                          key={item.id}
+                          className="flex items-center justify-between p-2.5 bg-white/[0.03] rounded-xl border border-white/5"
+                        >
+                          <div className="min-w-0 flex-1 mr-2">
+                            <p className="text-xs font-semibold text-white truncate">{item.name}</p>
+                            <p className="text-[11px] text-[#FF6A24] font-bold">
+                              ₹{item.price} <span className="text-[10px] text-gray-400 font-normal">x {item.quantity} = ₹{item.price * item.quantity}</span>
+                            </p>
+                          </div>
+
+                          <div className="flex items-center gap-1.5 flex-shrink-0">
+                            <button
+                              onClick={() => removeFromCart(item.id)}
+                              className="w-6 h-6 rounded-md bg-white/10 hover:bg-white/20 text-white flex items-center justify-center text-xs cursor-pointer transition-colors"
+                              aria-label="Decrease"
+                            >
+                              <Minus size={11} />
+                            </button>
+                            <span className="text-xs font-bold text-white w-5 text-center">
+                              {item.quantity}
+                            </span>
+                            <button
+                              onClick={() => addToCart(item.id)}
+                              className="w-6 h-6 rounded-md bg-[#FF6A24] hover:bg-[#E55815] text-white flex items-center justify-center text-xs cursor-pointer transition-colors"
+                              aria-label="Increase"
+                            >
+                              <Plus size={11} />
+                            </button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Order Type Toggle: Home Delivery vs Takeaway */}
+                  <div className="bg-[#1A1A1A] p-3 rounded-xl border border-white/10 space-y-2">
+                    <span className="font-heading font-bold text-xs text-white block">
+                      Order Fulfillment Method:
+                    </span>
+                    <div className="grid grid-cols-2 gap-2">
+                      <button
+                        type="button"
+                        onClick={() => setOrderType("delivery")}
+                        className={`flex items-center justify-center gap-2 py-2 px-3 rounded-lg text-xs font-heading font-bold transition-all cursor-pointer ${
+                          orderType === "delivery"
+                            ? "bg-[#FF6A24] text-white shadow-flame-sm"
+                            : "bg-white/5 hover:bg-white/10 text-gray-400 border border-white/5"
+                        }`}
+                      >
+                        <Bike size={14} />
+                        <span>Home Delivery</span>
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setOrderType("takeaway")}
+                        className={`flex items-center justify-center gap-2 py-2 px-3 rounded-lg text-xs font-heading font-bold transition-all cursor-pointer ${
+                          orderType === "takeaway"
+                            ? "bg-[#FF6A24] text-white shadow-flame-sm"
+                            : "bg-white/5 hover:bg-white/10 text-gray-400 border border-white/5"
+                        }`}
+                      >
+                        <Car size={14} />
+                        <span>Takeaway / Pickup</span>
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Customer Information (Name & Phone) */}
+                  <div className="space-y-2">
+                    <span className="font-heading font-bold text-xs text-[#FFC107] block uppercase tracking-wider">
+                      Customer Details
+                    </span>
+                    <div className="grid grid-cols-2 gap-2">
+                      <input
+                        type="text"
+                        placeholder="Your Name (e.g. Rahul)"
+                        value={customerName}
+                        onChange={(e) => setCustomerName(e.target.value)}
+                        className="w-full bg-[#1A1A1A] border border-white/10 rounded-lg px-3 py-2 text-xs text-white placeholder-gray-500 focus:outline-none focus:border-[#FF6A24]"
+                      />
+                      <input
+                        type="tel"
+                        placeholder="Phone (e.g. 9876543210)"
+                        value={customerPhone}
+                        onChange={(e) => setCustomerPhone(e.target.value)}
+                        className="w-full bg-[#1A1A1A] border border-white/10 rounded-lg px-3 py-2 text-xs text-white placeholder-gray-500 focus:outline-none focus:border-[#FF6A24]"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Delivery Location & Address Section (Only for Home Delivery) */}
+                  {orderType === "delivery" && (
+                    <div className="bg-[#181818] p-3.5 rounded-xl border border-white/10 space-y-3">
+                      <div className="flex items-center justify-between">
+                        <span className="font-heading font-bold text-xs text-white flex items-center gap-1.5">
+                          <MapPin size={13} className="text-[#FF6A24]" />
+                          <span>Delivery Address &amp; Location</span>
+                        </span>
+                        <span className="text-[10px] text-gray-400">Motihari Area</span>
                       </div>
 
-                      <div className="flex items-center gap-2 flex-shrink-0">
+                      {/* Address Textarea */}
+                      <textarea
+                        rows={2}
+                        placeholder="House / Flat No., Street, Landmark (e.g. Near Gandhi Chowk, Motihari)"
+                        value={deliveryAddress}
+                        onChange={(e) => setDeliveryAddress(e.target.value)}
+                        className="w-full bg-[#121212] border border-white/10 rounded-lg p-2.5 text-xs text-white placeholder-gray-500 focus:outline-none focus:border-[#FF6A24] resize-none"
+                      />
+
+                      {/* GPS Live Location Button */}
+                      <div>
                         <button
-                          onClick={() => removeFromCart(item.id)}
-                          className="w-6 h-6 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center text-xs cursor-pointer"
+                          type="button"
+                          onClick={handleGetLiveLocation}
+                          disabled={locating}
+                          className="w-full flex items-center justify-center gap-2 bg-[#FF6A24]/15 hover:bg-[#FF6A24]/25 text-[#FF6A24] border border-[#FF6A24]/40 py-2 px-3 rounded-lg text-xs font-heading font-semibold transition-all cursor-pointer disabled:opacity-50"
                         >
-                          -
+                          {locating ? (
+                            <>
+                              <Loader2 size={13} className="animate-spin" />
+                              <span>Detecting GPS Location...</span>
+                            </>
+                          ) : (
+                            <>
+                              <Navigation size={13} />
+                              <span>{gpsCoords ? "Update Live GPS Location" : "Share Live Location Through Map"}</span>
+                            </>
+                          )}
                         </button>
-                        <span className="text-xs font-bold text-white w-4 text-center">
-                          {item.quantity}
-                        </span>
-                        <button
-                          onClick={() => addToCart(item.id)}
-                          className="w-6 h-6 rounded-full bg-[#FF6A24] text-white flex items-center justify-center text-xs cursor-pointer"
-                        >
-                          +
-                        </button>
+
+                        {/* Location Success Badge */}
+                        {gpsCoords && (
+                          <div className="mt-2 p-2 rounded-lg bg-green-950/60 border border-green-500/40 text-[11px] text-green-300 flex items-center justify-between">
+                            <span className="flex items-center gap-1.5">
+                              <Check size={13} className="text-green-400 flex-shrink-0" />
+                              <span>
+                                GPS Location pinned {gpsDistance ? `(~${gpsDistance} km from Flamora)` : ""}
+                              </span>
+                            </span>
+                            <a
+                              href={`https://maps.google.com/?q=${gpsCoords.lat},${gpsCoords.lng}`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-[10px] underline text-green-200 hover:text-white flex items-center gap-0.5"
+                            >
+                              <span>View Pin</span>
+                              <ExternalLink size={10} />
+                            </a>
+                          </div>
+                        )}
+
+                        {locationError && (
+                          <p className="mt-1.5 text-[10px] text-amber-400 flex items-center gap-1">
+                            <AlertCircle size={11} />
+                            <span>{locationError}</span>
+                          </p>
+                        )}
+                      </div>
+
+                      {/* Distance Selector (Within 4 km vs Beyond 4 km) */}
+                      <div className="pt-2 border-t border-white/5 space-y-1.5">
+                        <div className="flex items-center justify-between text-[11px]">
+                          <span className="text-gray-300 font-medium">Delivery Distance from Outlet:</span>
+                          <span className="text-[10px] text-gray-500">Marine Drive, Motihari</span>
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-2">
+                          <button
+                            type="button"
+                            onClick={() => setManualDistance("within")}
+                            className={`py-1.5 px-2 rounded-lg text-center font-heading text-[11px] transition-all cursor-pointer ${
+                              manualDistance === "within"
+                                ? "bg-[#FF6A24] text-white font-bold shadow-sm"
+                                : "bg-white/5 hover:bg-white/10 text-gray-400 border border-white/5"
+                            }`}
+                          >
+                            <div>Within 4 km</div>
+                            <div className={`text-[9px] ${manualDistance === "within" ? "text-white/80" : "text-green-400"}`}>
+                              {isOrderUnder150 ? "+₹50 (< ₹150)" : "FREE Delivery"}
+                            </div>
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => setManualDistance("beyond")}
+                            className={`py-1.5 px-2 rounded-lg text-center font-heading text-[11px] transition-all cursor-pointer ${
+                              manualDistance === "beyond"
+                                ? "bg-[#FF6A24] text-white font-bold shadow-sm"
+                                : "bg-white/5 hover:bg-white/10 text-gray-400 border border-white/5"
+                            }`}
+                          >
+                            <div>Beyond 4 km</div>
+                            <div className={`text-[9px] ${manualDistance === "beyond" ? "text-white/80" : "text-amber-400"}`}>
+                              +₹50 Delivery Charge
+                            </div>
+                          </button>
+                        </div>
+
+                        {/* Informational Tip on Delivery Rules */}
+                        <div className="text-[10px] text-gray-400 pt-1 leading-relaxed">
+                          {isBeyond4km ? (
+                            <span className="text-amber-300">
+                              ℹ️ Delivery location is beyond 4 km: standard delivery charge of ₹50 applied.
+                            </span>
+                          ) : isOrderUnder150 ? (
+                            <span className="text-amber-300">
+                              💡 Order is ₹{cartTotalPrice}. Add ₹{150 - cartTotalPrice} more to get <strong>FREE delivery</strong> (within 4 km)!
+                            </span>
+                          ) : (
+                            <span className="text-green-400">
+                              🎉 Congratulations! You qualify for <strong>FREE Delivery</strong> (Order is ₹150+ &amp; within 4 km).
+                            </span>
+                          )}
+                        </div>
                       </div>
                     </div>
-                  ))}
+                  )}
 
-                  <div className="pt-2 text-right">
-                    <button
-                      onClick={clearCart}
-                      className="text-[11px] text-gray-400 hover:text-red-400 transition-colors cursor-pointer"
-                    >
-                      Clear platter
-                    </button>
+                  {/* Payment Method Selector (COD vs Online) */}
+                  <div className="bg-[#1A1A1A] p-3 rounded-xl border border-white/10 space-y-2">
+                    <span className="font-heading font-bold text-xs text-white block">
+                      Choose Payment Method:
+                    </span>
+                    <div className="grid grid-cols-2 gap-2">
+                      <button
+                        type="button"
+                        onClick={() => setPaymentMethod("cod")}
+                        className={`flex items-center justify-center gap-1.5 py-2 px-2.5 rounded-lg text-xs font-heading font-semibold transition-all cursor-pointer ${
+                          paymentMethod === "cod"
+                            ? "bg-[#FF6A24] text-white shadow-flame-sm"
+                            : "bg-white/5 hover:bg-white/10 text-gray-400 border border-white/5"
+                        }`}
+                      >
+                        <Banknote size={14} />
+                        <span>Cash on Delivery (COD)</span>
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setPaymentMethod("online")}
+                        className={`flex items-center justify-center gap-1.5 py-2 px-2.5 rounded-lg text-xs font-heading font-semibold transition-all cursor-pointer ${
+                          paymentMethod === "online"
+                            ? "bg-[#FF6A24] text-white shadow-flame-sm"
+                            : "bg-white/5 hover:bg-white/10 text-gray-400 border border-white/5"
+                        }`}
+                      >
+                        <CreditCard size={14} />
+                        <span>Online UPI / QR</span>
+                      </button>
+                    </div>
                   </div>
-                </div>
+
+                  {/* Detailed Bill Summary Box */}
+                  <div className="p-3.5 bg-black/60 rounded-xl border border-white/10 space-y-1.5">
+                    <div className="flex items-center justify-between text-xs text-gray-300">
+                      <span>Items Subtotal:</span>
+                      <span className="font-semibold text-white">₹{cartTotalPrice}</span>
+                    </div>
+
+                    {orderType === "delivery" && (
+                      <div className="flex items-center justify-between text-xs">
+                        <span className="text-gray-300">Delivery Fee:</span>
+                        <span className={`font-semibold ${deliveryFee === 0 ? "text-green-400" : "text-[#FF6A24]"}`}>
+                          {deliveryFee === 0 ? "FREE" : `+₹${deliveryFee}`}
+                        </span>
+                      </div>
+                    )}
+
+                    <div className="pt-2 border-t border-white/10 flex items-center justify-between text-sm">
+                      <span className="font-heading font-bold text-white">Grand Total:</span>
+                      <span className="font-heading font-black text-xl text-[#FF6A24]">
+                        ₹{grandTotal}
+                      </span>
+                    </div>
+
+                    <div className="text-[10px] text-gray-400 pt-0.5 flex items-center justify-between">
+                      <span>Payment: {paymentMethod === "cod" ? "Cash on Delivery" : "Online UPI"}</span>
+                      <span>Mode: {orderType === "delivery" ? "Home Delivery" : "Takeaway"}</span>
+                    </div>
+                  </div>
+                </>
               )}
             </div>
 
-            {/* Bottom: Cart Total & WhatsApp Checkout CTA */}
+            {/* 3. Sticky Bottom CTA */}
             {cartItemsDetailed.length > 0 && (
-              <div className="pt-6 border-t border-white/10 space-y-4">
-                <div className="flex items-center justify-between text-sm">
-                  <span className="text-[#F4EBD6]/80">Estimated Total:</span>
-                  <span className="font-heading font-extrabold text-2xl text-[#FF6A24]">
-                    ₹{cartTotalPrice}
-                  </span>
-                </div>
-
+              <div className="p-4 border-t border-white/10 bg-[#161616] space-y-2 flex-shrink-0">
                 <a
                   href={generateCartWhatsAppUrl()}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-full flex items-center justify-center gap-2 bg-[#25D366] hover:bg-[#20BA5A] text-white py-3.5 px-4 rounded-xl font-heading font-semibold text-sm shadow-[0_4px_16px_rgba(37,211,102,0.4)] transition-all"
+                  className="w-full flex items-center justify-center gap-2 bg-[#25D366] hover:bg-[#20BA5A] text-white py-3.5 px-4 rounded-xl font-heading font-semibold text-sm shadow-[0_4px_16px_rgba(37,211,102,0.4)] transition-all active:scale-[0.99]"
                 >
                   <MessageCircle size={18} />
-                  <span>Send Platter Order on WhatsApp</span>
+                  <span>Send Platter Order on WhatsApp • ₹{grandTotal}</span>
                 </a>
 
-                <p className="text-[11px] text-center text-gray-400">
-                  Pre-fills all {cartTotalCount} items directly into WhatsApp for instant confirmation.
+                <p className="text-[10px] text-center text-gray-400">
+                  Pre-fills all items, address, live GPS location &amp; payment mode into WhatsApp for instant confirmation.
                 </p>
               </div>
             )}
