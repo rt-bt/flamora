@@ -74,13 +74,13 @@ export const siteConfig: SiteConfig = {
     support: "support@flamorafood.com",
   },
   address: {
-    street: "Near Bypass, Bariyarpur",
-    locality: "Bariyarpur",
+    street: "Marine Drive, Rowing Club Road",
+    locality: "Marine Drive",
     city: "Motihari",
     state: "Bihar",
     pincode: "845401",
     country: "India",
-    full: "Near Bypass, Bariyarpur, Motihari, Bihar – 845401",
+    full: "Marine Drive, Rowing Club Road, Motihari, East Champaran, Bihar – 845401, India.",
   },
   timings: {
     display: "Open Daily 11:00 AM – 11:00 PM",
@@ -97,7 +97,7 @@ export const siteConfig: SiteConfig = {
     embedUrl:
       "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d57187.37562852261!2d84.887222!3d26.650833!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x399334fb19d510f9%3A0xe54c1303837e2898!2sMotihari%2C%20Bihar!5e0!3m2!1sen!2sin!4v1710000000000!5m2!1sen!2sin",
     directionsUrl:
-      "https://www.google.com/maps/search/?api=1&query=Near+Bypass,+Bariyarpur,+Motihari,+Bihar+845401",
+      "https://www.google.com/maps/search/?api=1&query=Marine+Drive,+Rowing+Club+Road,+Motihari,+Bihar+845401",
     latitude: 26.650833,
     longitude: 84.887222,
   },
@@ -114,7 +114,7 @@ export const siteConfig: SiteConfig = {
       "Tandoori Kebabs Motihari",
       "Food Delivery Motihari",
       "Halal Grill Restaurant Bihar",
-      "Fast Food Bariyarpur Motihari",
+      "Fast Food Marine Drive Motihari",
       "Grill Combos Motihari",
     ],
   },

@@ -15,7 +15,7 @@ export interface ReviewItem {
 const reviews: ReviewItem[] = [
   {
     name: "Aman Verma",
-    location: "Bariyarpur, Motihari",
+    location: "Marine Drive, Motihari",
     rating: 5,
     date: "3 days ago",
     dish: "Chicken Tikka Grill & Peri-Peri Wings",

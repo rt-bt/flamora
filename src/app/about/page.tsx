@@ -173,7 +173,7 @@ export default function AboutPage() {
                   &ldquo;Flavour that lingers, memories that last.&rdquo;
                 </p>
                 <p className="text-xs text-[#FF6A24] font-semibold mt-1">
-                  Near Bypass, Bariyarpur, Motihari
+                  Marine Drive, Rowing Club Road, Motihari
                 </p>
               </div>
             </div>

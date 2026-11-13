@@ -46,7 +46,7 @@ export default function Navbar() {
             <span className="text-white/20">|</span>
             <span className="text-[#F4EBD6]/75 text-[11px] flex items-center gap-1">
               <MapPin size={11} className="text-[#FF6A24]" />
-              Near Bypass, Bariyarpur · Daily 11 AM – 11 PM
+              Marine Drive, Rowing Club Road · Daily 11 AM – 11 PM
             </span>
           </div>
 
@@ -232,7 +232,7 @@ export default function Navbar() {
               </div>
 
               <p className="text-[10px] text-center text-gray-500 pt-1">
-                Near Bypass, Bariyarpur, Motihari
+                Marine Drive, Rowing Club Road, Motihari
               </p>
             </div>
           </div>

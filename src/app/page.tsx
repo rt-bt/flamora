@@ -469,8 +469,8 @@ export default function HomePage() {
                       <div>
                         <p className="font-semibold text-white">Flamora – Grill &amp; Fry</p>
                         <p className="text-gray-400 mt-0.5 leading-snug">
-                          Near Bypass, Bariyarpur<br />
-                          Motihari, Bihar – 845401
+                          Marine Drive, Rowing Club Road<br />
+                          Motihari, East Champaran, Bihar – 845401
                         </p>
                       </div>
                     </div>

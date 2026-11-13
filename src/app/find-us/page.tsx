@@ -101,7 +101,7 @@ export default function FindUsPage() {
                       {siteConfig.address.full}
                     </p>
                     <p className="text-[11px] text-gray-400 mt-1">
-                      Prominently located right near Bariyarpur Bypass for easy parking and access.
+                      Located on Marine Drive, Rowing Club Road with ample parking and refreshing ambiance.
                     </p>
                   </div>
                 </div>
