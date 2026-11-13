@@ -238,7 +238,7 @@ export const menuItems: MenuItem[] = [
     spiceLevel: 1,
     description: "4 Pc Crispy Chicken + Large Crispy Fries + 2 Signature Dips + 2 Chilled Soft Drinks.",
     portion: "Family Combo · Serves 2",
-    image: "/images/flamora-duo-combo.jpg",
+    image: "/images/flamora-duo-fresh.jpg",
     tags: ["Family Combo", "Perfect for Two"],
   },
   {
@@ -532,7 +532,7 @@ export const comboDeals: ComboDeal[] = [
       "2 Signature Dips",
       "2 Chilled Soft Drinks",
     ],
-    image: "/images/flamora-duo-combo.jpg",
+    image: "/images/flamora-duo-fresh.jpg",
     isVeg: false,
     serves: "2 Persons",
   },
