@@ -95,11 +95,11 @@ export const siteConfig: SiteConfig = {
   },
   maps: {
     embedUrl:
-      "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d57187.37562852261!2d84.887222!3d26.650833!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x399334fb19d510f9%3A0xe54c1303837e2898!2sMotihari%2C%20Bihar!5e0!3m2!1sen!2sin!4v1710000000000!5m2!1sen!2sin",
+      "https://maps.google.com/maps?q=26.647844,84.922933&hl=en&z=17&output=embed",
     directionsUrl:
-      "https://www.google.com/maps/search/?api=1&query=Marine+Drive,+Rowing+Club+Road,+Motihari,+Bihar+845401",
-    latitude: 26.650833,
-    longitude: 84.887222,
+      "https://www.google.com/maps/search/?api=1&query=26.647844,84.922933",
+    latitude: 26.647844,
+    longitude: 84.922933,
   },
   seo: {
     title: "Flamora – Grill & Fry | Best Grill Restaurant in Motihari, Bihar",
