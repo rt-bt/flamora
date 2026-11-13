@@ -128,12 +128,21 @@ export default function FindUsPage() {
                   </div>
                   <div>
                     <p className="font-semibold text-white">Direct Phone Call</p>
-                    <a
-                      href={`tel:${siteConfig.phoneRaw}`}
-                      className="text-xs sm:text-sm text-[#FF6A24] hover:underline font-semibold mt-1 block"
-                    >
-                      {siteConfig.phoneDisplay}
-                    </a>
+                    <div className="mt-1 flex flex-wrap items-center gap-2 text-xs sm:text-sm font-semibold">
+                      <a
+                        href={`tel:${siteConfig.phoneRaw}`}
+                        className="text-[#FF6A24] hover:underline"
+                      >
+                        {siteConfig.phoneDisplay}
+                      </a>
+                      <span className="text-white/30">•</span>
+                      <a
+                        href={`tel:${siteConfig.phoneRaw2}`}
+                        className="text-[#FF6A24] hover:underline"
+                      >
+                        {siteConfig.phoneDisplay2}
+                      </a>
+                    </div>
                   </div>
                 </div>
               </div>

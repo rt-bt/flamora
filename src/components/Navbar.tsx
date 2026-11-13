@@ -50,14 +50,24 @@ export default function Navbar() {
             </span>
           </div>
 
-          <div className="flex items-center gap-5 text-[11px]">
-            <a
-              href={`tel:${siteConfig.phoneRaw}`}
-              className="flex items-center gap-1.5 text-white/90 hover:text-[#FF6A24] transition-colors font-medium"
-            >
+          <div className="flex items-center gap-4 text-[11px]">
+            <div className="flex items-center gap-1.5 text-white/90">
               <Phone size={12} className="text-[#FF6A24]" />
-              <span>Call: {siteConfig.phoneDisplay}</span>
-            </a>
+              <span className="text-[#F4EBD6]/60">Call:</span>
+              <a
+                href={`tel:${siteConfig.phoneRaw}`}
+                className="hover:text-[#FF6A24] transition-colors font-medium"
+              >
+                {siteConfig.phoneDisplay}
+              </a>
+              <span className="text-white/20">|</span>
+              <a
+                href={`tel:${siteConfig.phoneRaw2}`}
+                className="hover:text-[#FF6A24] transition-colors font-medium"
+              >
+                {siteConfig.phoneDisplay2}
+              </a>
+            </div>
             <span className="text-white/20">·</span>
             <span className="text-[#FFC107] font-semibold flex items-center gap-1">
               ★ 4.9 on Google (450+ Reviews)
@@ -204,13 +214,22 @@ export default function Navbar() {
                 <span>Order on WhatsApp</span>
               </a>
 
-              <a
-                href={`tel:${siteConfig.phoneRaw}`}
-                className="w-full flex items-center justify-center gap-2 bg-white/5 border border-white/10 text-white/90 hover:text-white py-2.5 rounded-full font-heading font-medium text-xs"
-              >
-                <Phone size={13} className="text-[#FF6A24]" />
-                <span>Call: {siteConfig.phoneDisplay}</span>
-              </a>
+              <div className="grid grid-cols-2 gap-2 w-full">
+                <a
+                  href={`tel:${siteConfig.phoneRaw}`}
+                  className="flex items-center justify-center gap-1.5 bg-white/5 border border-white/10 text-white/90 hover:text-white py-2 rounded-full font-heading font-medium text-[11px]"
+                >
+                  <Phone size={12} className="text-[#FF6A24]" />
+                  <span>{siteConfig.phoneDisplay}</span>
+                </a>
+                <a
+                  href={`tel:${siteConfig.phoneRaw2}`}
+                  className="flex items-center justify-center gap-1.5 bg-white/5 border border-white/10 text-white/90 hover:text-white py-2 rounded-full font-heading font-medium text-[11px]"
+                >
+                  <Phone size={12} className="text-[#FF6A24]" />
+                  <span>{siteConfig.phoneDisplay2}</span>
+                </a>
+              </div>
 
               <p className="text-[10px] text-center text-gray-500 pt-1">
                 Near Bypass, Bariyarpur, Motihari

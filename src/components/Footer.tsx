@@ -138,12 +138,20 @@ export default function Footer() {
             <ul className="space-y-3 text-sm text-[#F4EBD6]/80">
               <li className="flex items-start gap-2.5">
                 <Phone size={16} className="text-[#FF6A24] mt-0.5 flex-shrink-0" />
-                <a
-                  href={`tel:${siteConfig.phoneRaw}`}
-                  className="hover:text-[#FF6A24] transition-colors"
-                >
-                  {siteConfig.phoneDisplay}
-                </a>
+                <div className="flex flex-col gap-1">
+                  <a
+                    href={`tel:${siteConfig.phoneRaw}`}
+                    className="hover:text-[#FF6A24] transition-colors"
+                  >
+                    {siteConfig.phoneDisplay}
+                  </a>
+                  <a
+                    href={`tel:${siteConfig.phoneRaw2}`}
+                    className="hover:text-[#FF6A24] transition-colors"
+                  >
+                    {siteConfig.phoneDisplay2}
+                  </a>
+                </div>
               </li>
               <li className="flex items-start gap-2.5">
                 <MessageCircle size={16} className="text-[#25D366] mt-0.5 flex-shrink-0" />

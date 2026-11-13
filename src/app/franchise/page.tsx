@@ -392,13 +392,21 @@ export default function FranchisePage() {
               <p className="text-xs text-[#F4EBD6]/70">
                 Call our corporate franchise desk for priority consultation:
               </p>
-              <div className="flex flex-wrap items-center gap-4 text-xs font-semibold">
+              <div className="flex flex-wrap items-center gap-3 text-xs font-semibold">
                 <a
                   href={`tel:${siteConfig.phoneRaw}`}
                   className="flex items-center gap-1.5 text-[#FF6A24] hover:underline"
                 >
                   <Phone size={14} />
                   <span>{siteConfig.phoneDisplay}</span>
+                </a>
+                <span className="text-gray-600">•</span>
+                <a
+                  href={`tel:${siteConfig.phoneRaw2}`}
+                  className="flex items-center gap-1.5 text-[#FF6A24] hover:underline"
+                >
+                  <Phone size={14} />
+                  <span>{siteConfig.phoneDisplay2}</span>
                 </a>
                 <span className="text-gray-600">|</span>
                 <a

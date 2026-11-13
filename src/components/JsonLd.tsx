@@ -13,7 +13,7 @@ export default function JsonLd() {
       `${siteConfig.seo.siteUrl}/images/flame-grills.jpg`,
       `${siteConfig.seo.siteUrl}/images/combo-club.jpg`,
     ],
-    telephone: siteConfig.phoneRaw,
+    telephone: [siteConfig.phoneRaw, siteConfig.phoneRaw2],
     email: siteConfig.email,
     url: siteConfig.seo.siteUrl,
     servesCuisine: [

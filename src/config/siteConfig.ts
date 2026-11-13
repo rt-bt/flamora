@@ -6,6 +6,9 @@ export interface SiteConfig {
   heroBadge: string;
   phoneDisplay: string;
   phoneRaw: string;
+  phoneDisplay2: string;
+  phoneRaw2: string;
+  phones: Array<{ display: string; raw: string; label?: string }>;
   whatsappNumber: string;
   whatsappOrderBaseUrl: string;
   email: string;
@@ -49,10 +52,16 @@ export const siteConfig: SiteConfig = {
   tagline: "Grill. Fry. Repeat.",
   handwrittenTagline: "Good Food Brings People Together",
   heroBadge: "FIRE. FLAVOUR. FLAMORA.",
-  phoneDisplay: "+91 98765 43210",
-  phoneRaw: "+919876543210",
-  whatsappNumber: "919876543210",
-  whatsappOrderBaseUrl: "https://wa.me/919876543210",
+  phoneDisplay: "+91 6252-419155",
+  phoneRaw: "+916252419155",
+  phoneDisplay2: "+91 87973 15004",
+  phoneRaw2: "+918797315004",
+  phones: [
+    { display: "+91 6252-419155", raw: "+916252419155", label: "Landline" },
+    { display: "+91 87973 15004", raw: "+918797315004", label: "Mobile" },
+  ],
+  whatsappNumber: "918797315004",
+  whatsappOrderBaseUrl: "https://wa.me/918797315004",
   email: "hello@flamoragrill.com",
   address: {
     street: "Near Bypass, Bariyarpur",
