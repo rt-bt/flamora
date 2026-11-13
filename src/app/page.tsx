@@ -38,7 +38,7 @@ export default function HomePage() {
       subtitle: "Crunch in every bite",
       startingPrice: "From ₹79",
       badge: "⚡ Super Crunchy",
-      image: "/images/crispy-favourites.jpg",
+      image: "/images/flamora-crispy-chicken.jpg",
       href: "/menu?category=Fried",
       icon: Drumstick,
     },
