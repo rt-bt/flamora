@@ -224,7 +224,7 @@ export const menuItems: MenuItem[] = [
     spiceLevel: 2,
     description: "4 Pc Chicken Seekh Kebab + Crispy French Fries + Signature Dip + Chilled Drink.",
     portion: "Combo for 1-2 Persons",
-    image: "/images/seekh-combo.jpg",
+    image: "/images/flamora-seekh-combo.jpg",
     tags: ["Single Combo", "Kebab Special"],
   },
   {
@@ -511,7 +511,7 @@ export const comboDeals: ComboDeal[] = [
       "Signature Garlic Dip",
       "1 Chilled Soft Drink",
     ],
-    image: "/images/seekh-combo.jpg",
+    image: "/images/flamora-seekh-combo.jpg",
     isVeg: false,
     serves: "1-2 Persons",
   },
