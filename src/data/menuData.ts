@@ -67,7 +67,7 @@ export const menuItems: MenuItem[] = [
     spiceLevel: 2,
     description: "Plump quarter chicken leg deep-scored and infused with Kashmiri red chili, garlic, and spiced yogurt. Prepared to your choice: live charcoal grilled or golden crispy fried.",
     portion: "1 Whole Leg Piece · Serves 1",
-    image: "/images/chicken-leg-grill.jpg",
+    image: "/images/flamora-chicken-leg.jpg",
     tags: ["Juicy", "Signature Cut"],
   },
   {
@@ -81,7 +81,7 @@ export const menuItems: MenuItem[] = [
     spiceLevel: 2,
     description: "Tender boneless chicken thigh cubes steeped overnight in hung curd, mustard oil, and roasted cumin, char-blistered over fiery embers for that authentic smoky bite.",
     portion: "6 Boneless Pieces · Serves 1-2",
-    image: "/images/chicken-tikka-grill.jpg",
+    image: "/images/flamora-chicken-tikka.jpg",
     tags: ["Bestseller", "Boneless"],
   },
   {

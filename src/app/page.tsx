@@ -47,7 +47,7 @@ export default function HomePage() {
       subtitle: "Made for sharing",
       startingPrice: "From ₹169",
       badge: "🍢 Sharing Special",
-      image: "/images/kebabs-tikka.jpg",
+      image: "/images/flamora-chicken-tikka.jpg",
       href: "/menu?category=Grills",
       icon: UtensilsCrossed,
     },
