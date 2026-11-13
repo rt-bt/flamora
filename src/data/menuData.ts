@@ -408,7 +408,7 @@ export const menuItems: MenuItem[] = [
     spiceLevel: 1,
     description: "Crisp and bubbly lemon-lime refreshing soda.",
     portion: "250ml Can / Bottle",
-    image: "/images/sevenup-drink.jpg",
+    image: "/images/flamora-sevenup.jpg",
     tags: ["Refreshing"],
   },
   {
