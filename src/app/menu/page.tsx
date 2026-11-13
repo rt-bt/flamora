@@ -11,6 +11,10 @@ import {
   Check,
   X,
   MessageCircle,
+  Crown,
+  Users,
+  User,
+  Sparkles,
 } from "lucide-react";
 import {
   menuCategories,
@@ -26,6 +30,7 @@ import {
 export default function MenuPage() {
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
   const [vegFilter, setVegFilter] = useState<"all" | "veg" | "non-veg">("all");
+  const [comboTypeFilter, setComboTypeFilter] = useState<"all" | "single" | "family">("all");
   const [searchQuery, setSearchQuery] = useState("");
   const [cart, setCart] = useState<{ [id: string]: number }>({});
   const [cartOpen, setCartOpen] = useState(false);
@@ -52,12 +57,29 @@ export default function MenuPage() {
 
   const clearCart = () => setCart({});
 
-  // Cart totals calculation
+  // Cart totals calculation (supports both menuItems and comboDeals)
   const cartItemsDetailed = useMemo(() => {
     return Object.entries(cart)
       .map(([id, qty]) => {
         const item = menuItems.find((m) => m.id === id);
-        return item ? { ...item, quantity: qty } : null;
+        if (item) return { ...item, quantity: qty };
+        const combo = comboDeals.find((c) => c.id === id);
+        if (combo) {
+          return {
+            id: combo.id,
+            name: combo.title,
+            category: "Combos" as const,
+            price: combo.price,
+            originalPrice: combo.originalPrice,
+            isVeg: combo.isVeg,
+            spiceLevel: 2 as const,
+            description: combo.tagline,
+            portion: combo.serves,
+            image: combo.image,
+            quantity: qty,
+          };
+        }
+        return null;
       })
       .filter(Boolean) as (MenuItem & { quantity: number })[];
   }, [cart]);
@@ -73,13 +95,13 @@ export default function MenuPage() {
     );
   }, [cartItemsDetailed]);
 
-  // Generate WhatsApp custom order link for multiple items
+  // Generate WhatsApp custom order link for multi-item platter
   const generateCartWhatsAppUrl = () => {
     if (cartItemsDetailed.length === 0) return getWhatsAppOrderUrl();
     const itemsList = cartItemsDetailed
       .map((item) => `• ${item.name} x${item.quantity} (₹${item.price * item.quantity})`)
       .join("\n");
-    const message = `Hi Flamora! I would like to place an order:\n\n${itemsList}\n\n*Total Amount: ₹${cartTotalPrice}*\nPlease confirm order and delivery time.`;
+    const message = `Hi Flamora! I would like to place an order from your menu:\n\n${itemsList}\n\n*Total Amount: ₹${cartTotalPrice}*\nPlease confirm order and delivery time.`;
     return getWhatsAppOrderUrl(message);
   };
 
@@ -107,57 +129,65 @@ export default function MenuPage() {
     });
   }, [selectedCategory, vegFilter, searchQuery]);
 
+  // Filtered combos
+  const filteredCombos = useMemo(() => {
+    if (comboTypeFilter === "all") return comboDeals;
+    return comboDeals.filter((c) => c.comboType === comboTypeFilter);
+  }, [comboTypeFilter]);
+
   return (
     <div className="min-h-screen bg-[#0F0F0F] text-[#F4EBD6] pb-24">
       {/* =========================================================================
           HERO BANNER
       ========================================================================= */}
-      <section className="relative py-16 sm:py-20 bg-gradient-to-b from-[#141414] to-[#0F0F0F] border-b border-white/10 overflow-hidden">
+      <section className="relative py-14 sm:py-20 bg-gradient-to-b from-[#141414] to-[#0F0F0F] border-b border-white/10 overflow-hidden">
         <div
           className="absolute inset-0 opacity-15 pointer-events-none bg-cover bg-center"
           style={{ backgroundImage: `url('/images/hero-flame-grill.jpg')` }}
         />
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-4">
           <span className="text-xs sm:text-sm font-heading font-bold text-[#FF6A24] tracking-[0.25em] uppercase">
-            TASTE THE REAL FLAME
+            REAL CHICKEN · BOLD FLAVOURS · GREAT TIMES
           </span>
-          <h1 className="font-heading font-extrabold text-4xl sm:text-6xl text-white tracking-tight">
+          <h1 className="font-heading font-extrabold text-3xl sm:text-5xl lg:text-6xl text-white tracking-tight">
             Our Menu &amp; Combos
           </h1>
-          <p className="text-sm sm:text-base text-[#F4EBD6]/80 max-w-2xl mx-auto leading-relaxed">
-            Live charcoal grills, crunchy golden fried specials, and authentic Mughlai kebabs. Order directly on WhatsApp with instant kitchen confirmation!
+          <p className="text-xs sm:text-base text-[#F4EBD6]/80 max-w-2xl mx-auto leading-relaxed">
+            Live charcoal flame grills, golden crispy fried specials, signature combos, sides &amp; ice-cold drinks. Order directly on WhatsApp for express live kitchen preparation.
           </p>
 
           {/* Quick Stats Pill */}
-          <div className="pt-2 flex flex-wrap justify-center items-center gap-6 text-xs text-[#FFC107]">
+          <div className="pt-2 flex flex-wrap justify-center items-center gap-4 sm:gap-6 text-xs text-[#FFC107]">
             <span className="flex items-center gap-1.5">
               <Flame size={14} className="text-[#FF6A24]" /> 100% Halal Meats
             </span>
-            <span>•</span>
-            <span>Live Charcoal Smoked</span>
-            <span>•</span>
+            <span className="hidden sm:inline">•</span>
+            <span className="flex items-center gap-1.5">
+              <Sparkles size={14} className="text-[#FF6A24]" /> Live Charcoal Smoked
+            </span>
+            <span className="hidden sm:inline">•</span>
             <span>Made Fresh to Order</span>
           </div>
         </div>
       </section>
 
       {/* =========================================================================
-          CONTROLS: CATEGORY TABS & SEARCH
+          CONTROLS: CATEGORY TABS, VEG FILTER & SEARCH
       ========================================================================= */}
-      <section className="sticky top-[69px] z-30 bg-[#0F0F0F]/95 backdrop-blur-md border-b border-white/10 py-4 px-4 sm:px-6 lg:px-8 shadow-md">
-        <div className="max-w-7xl mx-auto space-y-4">
-          <div className="flex flex-col md:flex-row items-center justify-between gap-4">
-            {/* Category Tabs (Scrollable on mobile) */}
-            <div className="flex items-center gap-2 overflow-x-auto w-full md:w-auto pb-2 md:pb-0 scrollbar-none">
+      <section className="sticky top-[69px] z-30 bg-[#0F0F0F]/95 backdrop-blur-md border-b border-white/10 py-3 sm:py-4 px-4 sm:px-6 lg:px-8 shadow-md">
+        <div className="max-w-7xl mx-auto space-y-3">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-3 sm:gap-4">
+            {/* Category Tabs (Horizontal Scrollable) */}
+            <div className="flex items-center gap-2 overflow-x-auto w-full md:w-auto pb-1 md:pb-0 scrollbar-none">
               {menuCategories.map((cat) => {
                 const isActive = selectedCategory === cat.id;
                 return (
                   <button
                     key={cat.id}
                     onClick={() => setSelectedCategory(cat.id)}
-                    className={`whitespace-nowrap px-4 py-2 rounded-full font-heading text-xs sm:text-sm font-semibold transition-all duration-200 cursor-pointer ${
+                    className={`whitespace-nowrap px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-full font-heading text-xs sm:text-sm font-semibold transition-all duration-200 cursor-pointer ${
                       isActive
-                        ? "bg-[#FF6A24] text-white shadow-flame-sm scale-105"
+                        ? "bg-[#FF6A24] text-white shadow-flame-sm scale-102"
                         : "bg-[#181818] text-[#F4EBD6]/80 hover:bg-white/10 hover:text-white border border-white/5"
                     }`}
                   >
@@ -168,12 +198,12 @@ export default function MenuPage() {
             </div>
 
             {/* Search & Veg/Non-Veg Filter */}
-            <div className="flex items-center gap-3 w-full md:w-auto">
+            <div className="flex items-center gap-2 sm:gap-3 w-full md:w-auto">
               {/* Veg / Non-Veg Toggle */}
               <div className="inline-flex rounded-full bg-[#181818] p-1 border border-white/10 flex-shrink-0 text-xs">
                 <button
                   onClick={() => setVegFilter("all")}
-                  className={`px-3 py-1 rounded-full font-semibold transition-colors ${
+                  className={`px-2.5 sm:px-3 py-1 rounded-full font-semibold transition-colors ${
                     vegFilter === "all" ? "bg-white/20 text-white" : "text-gray-400"
                   }`}
                 >
@@ -181,7 +211,7 @@ export default function MenuPage() {
                 </button>
                 <button
                   onClick={() => setVegFilter("veg")}
-                  className={`flex items-center gap-1 px-3 py-1 rounded-full font-semibold transition-colors ${
+                  className={`flex items-center gap-1 px-2.5 sm:px-3 py-1 rounded-full font-semibold transition-colors ${
                     vegFilter === "veg" ? "bg-green-600/30 text-green-400" : "text-gray-400"
                   }`}
                 >
@@ -190,7 +220,7 @@ export default function MenuPage() {
                 </button>
                 <button
                   onClick={() => setVegFilter("non-veg")}
-                  className={`flex items-center gap-1 px-3 py-1 rounded-full font-semibold transition-colors ${
+                  className={`flex items-center gap-1 px-2.5 sm:px-3 py-1 rounded-full font-semibold transition-colors ${
                     vegFilter === "non-veg" ? "bg-red-600/30 text-red-400" : "text-gray-400"
                   }`}
                 >
@@ -202,22 +232,22 @@ export default function MenuPage() {
               {/* Search Input */}
               <div className="relative flex-1 sm:w-64">
                 <Search
-                  size={16}
+                  size={15}
                   className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
                 />
                 <input
                   type="text"
-                  placeholder="Search grills, kebabs..."
+                  placeholder="Search grilled chicken, tikka..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full bg-[#181818] border border-white/10 rounded-full pl-9 pr-4 py-2 text-xs sm:text-sm text-white placeholder-gray-500 focus:outline-none focus:border-[#FF6A24] transition-colors"
+                  className="w-full bg-[#181818] border border-white/10 rounded-full pl-9 pr-7 py-1.5 sm:py-2 text-xs sm:text-sm text-white placeholder-gray-500 focus:outline-none focus:border-[#FF6A24] transition-colors"
                 />
                 {searchQuery && (
                   <button
                     onClick={() => setSearchQuery("")}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white"
+                    className="absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white"
                   >
-                    <X size={14} />
+                    <X size={13} />
                   </button>
                 )}
               </div>
@@ -227,19 +257,19 @@ export default function MenuPage() {
       </section>
 
       {/* =========================================================================
-          MENU ITEMS GRID
+          MENU ITEMS GRID / LIST
       ========================================================================= */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10">
         {/* Results Header */}
-        <div className="flex items-center justify-between mb-8 pb-4 border-b border-white/10">
+        <div className="flex items-center justify-between mb-6 pb-3 border-b border-white/10">
           <p className="text-xs sm:text-sm text-[#F4EBD6]/70">
-            Showing <span className="text-[#FF6A24] font-bold">{filteredItems.length}</span> mouth-watering items
+            Showing <span className="text-[#FF6A24] font-bold">{filteredItems.length}</span> delicious dishes
           </p>
 
           {cartTotalCount > 0 && (
             <button
               onClick={() => setCartOpen(true)}
-              className="inline-flex items-center gap-2 bg-[#FF6A24] text-white px-4 py-1.5 rounded-full text-xs font-heading font-semibold shadow-flame-sm hover:bg-[#E55815] transition-all"
+              className="inline-flex items-center gap-2 bg-[#FF6A24] text-white px-3.5 py-1.5 rounded-full text-xs font-heading font-semibold shadow-flame-sm hover:bg-[#E55815] transition-all cursor-pointer"
             >
               <ShoppingBag size={14} />
               <span>Platter Box ({cartTotalCount})</span>
@@ -263,40 +293,44 @@ export default function MenuPage() {
                 setVegFilter("all");
                 setSearchQuery("");
               }}
-              className="mt-4 px-4 py-2 bg-[#FF6A24] text-white text-xs font-semibold rounded-full shadow-flame-sm"
+              className="mt-4 px-4 py-2 bg-[#FF6A24] text-white text-xs font-semibold rounded-full shadow-flame-sm cursor-pointer"
             >
               Reset Filters
             </button>
           </div>
         ) : (
           <div>
-            {/* Mobile Row Card Layout (Matches Design Book Mobile Menu Mockup) */}
+            {/* Mobile Card Layout (Polished, Fast, Native-App Quality) */}
             <div className="sm:hidden space-y-3">
               {filteredItems.map((item) => {
                 const inCartQty = cart[item.id] || 0;
                 return (
                   <div
                     key={`mob-${item.id}`}
-                    className="bg-[#141414] rounded-2xl p-3 border border-white/5 flex items-center justify-between gap-3 shadow-card-dark"
+                    className="bg-[#141414] rounded-2xl p-3 border border-white/5 flex flex-col gap-2.5 shadow-card-dark"
                   >
-                    <div className="flex items-center gap-3 flex-1 min-w-0">
-                      <div className="relative w-16 h-16 rounded-xl overflow-hidden flex-shrink-0 bg-black">
+                    <div className="flex items-start gap-3">
+                      {/* Dish Thumbnail */}
+                      <div className="relative w-20 h-20 rounded-xl overflow-hidden flex-shrink-0 bg-black">
                         <Image
                           src={item.image}
                           alt={item.name}
                           fill
                           className="object-cover"
+                          sizes="80px"
                         />
                       </div>
+
+                      {/* Details */}
                       <div className="min-w-0 flex-1">
                         <div className="flex items-center gap-1.5">
                           <div
-                            className={`w-2.5 h-2.5 border flex items-center justify-center rounded-[2px] ${
+                            className={`w-3 h-3 border flex items-center justify-center rounded-[2px] ${
                               item.isVeg ? "border-green-500" : "border-red-500"
                             }`}
                           >
                             <div
-                              className={`w-1 h-1 rounded-full ${
+                              className={`w-1.5 h-1.5 rounded-full ${
                                 item.isVeg ? "bg-green-500" : "bg-red-500"
                               }`}
                             />
@@ -305,133 +339,50 @@ export default function MenuPage() {
                             {item.name}
                           </h3>
                         </div>
-                        <p className="font-heading font-black text-sm text-[#FF6A24] mt-0.5">
-                          ₹{item.price}
+
+                        <p className="text-[11px] text-[#FFC107] font-medium mt-0.5">
+                          {item.portion}
+                        </p>
+
+                        <p className="text-[11px] text-[#F4EBD6]/70 line-clamp-2 mt-1 leading-snug">
+                          {item.description}
                         </p>
                       </div>
                     </div>
 
-                    <div className="flex items-center gap-2 flex-shrink-0">
-                      {inCartQty > 0 ? (
-                        <div className="inline-flex items-center bg-[#FF6A24] rounded-full text-white text-xs px-1.5 py-0.5">
-                          <button
-                            onClick={() => removeFromCart(item.id)}
-                            className="p-1 hover:bg-black/20 rounded-full"
-                          >
-                            <Minus size={12} />
-                          </button>
-                          <span className="px-1 font-bold">{inCartQty}</span>
-                          <button
-                            onClick={() => addToCart(item.id)}
-                            className="p-1 hover:bg-black/20 rounded-full"
-                          >
-                            <Plus size={12} />
-                          </button>
-                        </div>
-                      ) : (
-                        <button
-                          onClick={() => addToCart(item.id)}
-                          className="w-8 h-8 rounded-full border-2 border-[#FF6A24] text-[#FF6A24] flex items-center justify-center hover:bg-[#FF6A24] hover:text-white transition-colors"
-                          aria-label={`Add ${item.name}`}
-                        >
-                          <Plus size={16} />
-                        </button>
-                      )}
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-
-            {/* Desktop / Tablet Grid (Hidden on Mobile) */}
-            <div className="hidden sm:grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {filteredItems.map((item) => {
-              const inCartQty = cart[item.id] || 0;
-              return (
-                <div
-                  key={item.id}
-                  className="group bg-[#141414] rounded-[20px] overflow-hidden border border-white/5 hover:border-[#FF6A24]/40 shadow-card-dark transition-all duration-300 hover:-translate-y-1.5 flex flex-col justify-between"
-                >
-                  <div>
-                    {/* Item Image with Badges */}
-                    <div className="relative h-48 w-full bg-black overflow-hidden">
-                      <Image
-                        src={item.image}
-                        alt={item.name}
-                        fill
-                        className="object-cover group-hover:scale-108 transition-transform duration-500"
-                        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-t from-[#141414] via-transparent to-transparent opacity-70" />
-
-                      {/* Veg / Non-Veg Indicator Badge */}
-                      <div className="absolute top-3 left-3 bg-[#141414]/90 backdrop-blur-sm p-1 rounded-md border border-white/10 flex items-center justify-center">
-                        <div
-                          className={`w-3.5 h-3.5 border-2 flex items-center justify-center rounded-[2px] ${
-                            item.isVeg ? "border-green-500" : "border-red-500"
-                          }`}
-                        >
-                          <div
-                            className={`w-1.5 h-1.5 rounded-full ${
-                              item.isVeg ? "bg-green-500" : "bg-red-500"
-                            }`}
-                          />
-                        </div>
-                      </div>
-
-                      {/* Bestseller Badge */}
-                      {item.isBestseller && (
-                        <div className="absolute top-3 right-3 bg-gradient-to-r from-[#FF6A24] to-[#D62B28] text-white text-[10px] font-heading font-bold px-2.5 py-0.5 rounded-full shadow-sm">
-                          BESTSELLER
-                        </div>
-                      )}
-
-                      {/* Spice Level Indicator */}
-                      <div className="absolute bottom-2 left-3 bg-black/75 px-2 py-0.5 rounded-full text-[10px] font-semibold text-[#FFC107]">
-                        {"🔥".repeat(item.spiceLevel)} {item.spiceLevel === 1 ? "Mild" : item.spiceLevel === 2 ? "Medium" : "Extra Hot"}
-                      </div>
-                    </div>
-
-                    {/* Item Details */}
-                    <div className="p-5">
-                      <div className="flex items-start justify-between gap-2">
-                        <h3 className="font-heading font-bold text-base sm:text-lg text-white group-hover:text-[#FF6A24] transition-colors leading-snug">
-                          {item.name}
-                        </h3>
-                      </div>
-
-                      <p className="text-[11px] text-[#FFC107] font-medium mt-0.5">
-                        {item.portion}
-                      </p>
-
-                      <p className="text-xs text-[#F4EBD6]/75 mt-2 line-clamp-2 leading-relaxed">
-                        {item.description}
-                      </p>
-                    </div>
-                  </div>
-
-                  {/* Card Bottom: Price, WhatsApp Button & Add to Platter */}
-                  <div className="p-5 pt-0">
-                    <div className="flex items-center justify-between mb-3 border-t border-white/5 pt-3">
+                    {/* Mobile Bottom Row: Price & Actions */}
+                    <div className="flex items-center justify-between pt-2 border-t border-white/5">
                       <div className="flex items-baseline gap-1.5">
-                        <span className="font-heading font-extrabold text-xl text-[#FF6A24]">
+                        <span className="font-heading font-black text-base text-[#FF6A24]">
                           ₹{item.price}
                         </span>
                         {item.originalPrice && (
-                          <span className="text-xs text-gray-500 line-through">
+                          <span className="text-[11px] text-gray-500 line-through">
                             ₹{item.originalPrice}
                           </span>
                         )}
                       </div>
 
-                      {/* Quick Add / Platter Count */}
-                      <div className="flex items-center gap-1.5">
+                      <div className="flex items-center gap-2">
+                        {/* Direct WhatsApp Order */}
+                        <a
+                          href={getWhatsAppItemUrl(item.name, item.price)}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex items-center gap-1 bg-[#25D366]/20 text-[#25D366] hover:bg-[#25D366] hover:text-white px-2.5 py-1 rounded-full text-[11px] font-heading font-semibold transition-colors"
+                          title="Order on WhatsApp"
+                        >
+                          <MessageCircle size={13} />
+                          <span>Order</span>
+                        </a>
+
+                        {/* Platter Box Counter */}
                         {inCartQty > 0 ? (
-                          <div className="inline-flex items-center bg-[#FF6A24] rounded-full text-white text-xs px-1.5 py-0.5 shadow-flame-sm">
+                          <div className="inline-flex items-center bg-[#FF6A24] rounded-full text-white text-xs px-1.5 py-0.5">
                             <button
                               onClick={() => removeFromCart(item.id)}
                               className="p-1 hover:bg-black/20 rounded-full"
-                              aria-label="Reduce count"
+                              aria-label="Decrease"
                             >
                               <Minus size={12} />
                             </button>
@@ -439,7 +390,7 @@ export default function MenuPage() {
                             <button
                               onClick={() => addToCart(item.id)}
                               className="p-1 hover:bg-black/20 rounded-full"
-                              aria-label="Increase count"
+                              aria-label="Increase"
                             >
                               <Plus size={12} />
                             </button>
@@ -447,109 +398,334 @@ export default function MenuPage() {
                         ) : (
                           <button
                             onClick={() => addToCart(item.id)}
-                            className="w-8 h-8 rounded-full bg-[#FF6A24]/15 hover:bg-[#FF6A24] text-[#FF6A24] hover:text-white border border-[#FF6A24]/40 flex items-center justify-center transition-all duration-200"
-                            title="Add to Platter Box"
-                            aria-label={`Add ${item.name} to platter`}
+                            className="w-7 h-7 rounded-full border border-[#FF6A24] text-[#FF6A24] flex items-center justify-center hover:bg-[#FF6A24] hover:text-white transition-colors"
+                            aria-label={`Add ${item.name}`}
                           >
-                            <Plus size={16} />
+                            <Plus size={14} />
                           </button>
                         )}
                       </div>
                     </div>
+                  </div>
+                );
+              })}
+            </div>
 
-                    {/* Direct Single Item WhatsApp Order Button */}
-                    <a
-                      href={getWhatsAppItemUrl(item.name, item.price)}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="w-full flex items-center justify-center gap-2 bg-[#25D366]/15 hover:bg-[#25D366] text-[#25D366] hover:text-white border border-[#25D366]/30 py-2 px-3 rounded-xl text-xs font-heading font-semibold transition-all duration-300"
-                    >
-                      <MessageCircle size={14} />
-                      <span>Order on WhatsApp</span>
-                    </a>
+            {/* Desktop / Tablet Grid */}
+            <div className="hidden sm:grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+              {filteredItems.map((item) => {
+                const inCartQty = cart[item.id] || 0;
+                return (
+                  <div
+                    key={item.id}
+                    className="group bg-[#141414] rounded-[20px] overflow-hidden border border-white/5 hover:border-[#FF6A24]/40 shadow-card-dark transition-all duration-300 hover:-translate-y-1.5 flex flex-col justify-between"
+                  >
+                    <div>
+                      {/* Item Image with Badges */}
+                      <div className="relative h-48 w-full bg-black overflow-hidden">
+                        <Image
+                          src={item.image}
+                          alt={item.name}
+                          fill
+                          className="object-cover group-hover:scale-108 transition-transform duration-500"
+                          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-[#141414] via-transparent to-transparent opacity-70" />
+
+                        {/* Veg / Non-Veg Indicator Badge */}
+                        <div className="absolute top-3 left-3 bg-[#141414]/90 backdrop-blur-sm p-1 rounded-md border border-white/10 flex items-center justify-center">
+                          <div
+                            className={`w-3.5 h-3.5 border-2 flex items-center justify-center rounded-[2px] ${
+                              item.isVeg ? "border-green-500" : "border-red-500"
+                            }`}
+                          >
+                            <div
+                              className={`w-1.5 h-1.5 rounded-full ${
+                                item.isVeg ? "bg-green-500" : "bg-red-500"
+                              }`}
+                            />
+                          </div>
+                        </div>
+
+                        {/* Bestseller Badge */}
+                        {item.isBestseller && (
+                          <div className="absolute top-3 right-3 bg-gradient-to-r from-[#FF6A24] to-[#D62B28] text-white text-[10px] font-heading font-bold px-2.5 py-0.5 rounded-full shadow-sm">
+                            BESTSELLER
+                          </div>
+                        )}
+
+                        {/* Spice Level Indicator */}
+                        <div className="absolute bottom-2 left-3 bg-black/75 px-2 py-0.5 rounded-full text-[10px] font-semibold text-[#FFC107]">
+                          {"🔥".repeat(item.spiceLevel)} {item.spiceLevel === 1 ? "Mild" : item.spiceLevel === 2 ? "Medium" : "Extra Hot"}
+                        </div>
+                      </div>
+
+                      {/* Item Details */}
+                      <div className="p-5">
+                        <div className="flex items-start justify-between gap-2">
+                          <h3 className="font-heading font-bold text-base sm:text-lg text-white group-hover:text-[#FF6A24] transition-colors leading-snug">
+                            {item.name}
+                          </h3>
+                        </div>
+
+                        <p className="text-[11px] text-[#FFC107] font-medium mt-0.5">
+                          {item.portion}
+                        </p>
+
+                        <p className="text-xs text-[#F4EBD6]/75 mt-2 line-clamp-2 leading-relaxed">
+                          {item.description}
+                        </p>
+
+                        {/* Tags */}
+                        {item.tags && item.tags.length > 0 && (
+                          <div className="mt-3 flex flex-wrap gap-1.5">
+                            {item.tags.map((tag) => (
+                              <span
+                                key={tag}
+                                className="text-[10px] bg-white/5 border border-white/5 text-[#F4EBD6]/70 px-2 py-0.5 rounded-md"
+                              >
+                                {tag}
+                              </span>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Card Bottom: Price, WhatsApp Button & Add to Platter */}
+                    <div className="p-5 pt-0">
+                      <div className="flex items-center justify-between mb-3 border-t border-white/5 pt-3">
+                        <div className="flex items-baseline gap-1.5">
+                          <span className="font-heading font-extrabold text-xl text-[#FF6A24]">
+                            ₹{item.price}
+                          </span>
+                          {item.originalPrice && (
+                            <span className="text-xs text-gray-500 line-through">
+                              ₹{item.originalPrice}
+                            </span>
+                          )}
+                        </div>
+
+                        {/* Quick Add / Platter Count */}
+                        <div className="flex items-center gap-1.5">
+                          {inCartQty > 0 ? (
+                            <div className="inline-flex items-center bg-[#FF6A24] rounded-full text-white text-xs px-1.5 py-0.5 shadow-flame-sm">
+                              <button
+                                onClick={() => removeFromCart(item.id)}
+                                className="p-1 hover:bg-black/20 rounded-full cursor-pointer"
+                                aria-label="Reduce count"
+                              >
+                                <Minus size={12} />
+                              </button>
+                              <span className="px-1.5 font-bold">{inCartQty}</span>
+                              <button
+                                onClick={() => addToCart(item.id)}
+                                className="p-1 hover:bg-black/20 rounded-full cursor-pointer"
+                                aria-label="Increase count"
+                              >
+                                <Plus size={12} />
+                              </button>
+                            </div>
+                          ) : (
+                            <button
+                              onClick={() => addToCart(item.id)}
+                              className="w-8 h-8 rounded-full bg-[#FF6A24]/15 hover:bg-[#FF6A24] text-[#FF6A24] hover:text-white border border-[#FF6A24]/40 flex items-center justify-center transition-all duration-200 cursor-pointer"
+                              title="Add to Platter Box"
+                              aria-label={`Add ${item.name} to platter`}
+                            >
+                              <Plus size={16} />
+                            </button>
+                          )}
+                        </div>
+                      </div>
+
+                      {/* Direct Single Item WhatsApp Order Button */}
+                      <a
+                        href={getWhatsAppItemUrl(item.name, item.price)}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="w-full flex items-center justify-center gap-2 bg-[#25D366]/15 hover:bg-[#25D366] text-[#25D366] hover:text-white border border-[#25D366]/30 py-2 px-3 rounded-xl text-xs font-heading font-semibold transition-all duration-300"
+                      >
+                        <MessageCircle size={14} />
+                        <span>Order on WhatsApp</span>
+                      </a>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        )}
+      </section>
+
+      {/* =========================================================================
+          SECTION: COMBOS & VALUE FEASTS (MATCHES OFFICIAL MENU CARD)
+      ========================================================================= */}
+      <section id="combos" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 sm:pt-14">
+        <div className="bg-gradient-to-r from-[#181818] via-[#141414] to-[#181818] border border-white/10 rounded-[24px] p-5 sm:p-10 shadow-2xl">
+          {/* Header */}
+          <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 mb-8 pb-5 border-b border-white/10">
+            <div>
+              <span className="flex items-center gap-1.5 text-xs font-heading font-bold text-[#FF6A24] tracking-[0.25em] uppercase mb-1">
+                <Crown size={15} /> MORE CHICKEN · MORE VALUE
+              </span>
+              <h2 className="font-heading font-extrabold text-2xl sm:text-4xl text-white">
+                Flamora Combos &amp; Feasts
+              </h2>
+            </div>
+
+            {/* Filter Toggle: All / Single / Family */}
+            <div className="inline-flex rounded-full bg-[#0F0F0F] p-1 border border-white/10 text-xs">
+              <button
+                onClick={() => setComboTypeFilter("all")}
+                className={`px-3 py-1.5 rounded-full font-heading font-semibold transition-colors cursor-pointer ${
+                  comboTypeFilter === "all" ? "bg-[#FF6A24] text-white" : "text-gray-400 hover:text-white"
+                }`}
+              >
+                All Combos ({comboDeals.length})
+              </button>
+              <button
+                onClick={() => setComboTypeFilter("single")}
+                className={`flex items-center gap-1 px-3 py-1.5 rounded-full font-heading font-semibold transition-colors cursor-pointer ${
+                  comboTypeFilter === "single" ? "bg-[#FF6A24] text-white" : "text-gray-400 hover:text-white"
+                }`}
+              >
+                <User size={13} />
+                <span>Single Combos (4)</span>
+              </button>
+              <button
+                onClick={() => setComboTypeFilter("family")}
+                className={`flex items-center gap-1 px-3 py-1.5 rounded-full font-heading font-semibold transition-colors cursor-pointer ${
+                  comboTypeFilter === "family" ? "bg-[#FF6A24] text-white" : "text-gray-400 hover:text-white"
+                }`}
+              >
+                <Users size={13} />
+                <span>Family Combos (4)</span>
+              </button>
+            </div>
+          </div>
+
+          {/* Combos Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {filteredCombos.map((combo) => {
+              const inCartQty = cart[combo.id] || 0;
+              return (
+                <div
+                  key={combo.id}
+                  className="bg-[#0F0F0F] rounded-2xl border border-white/10 overflow-hidden flex flex-col justify-between hover:border-[#FF6A24]/40 transition-colors shadow-card-dark"
+                >
+                  <div>
+                    {/* Combo Food Image Banner */}
+                    <div className="relative h-48 w-full bg-black overflow-hidden">
+                      <Image
+                        src={combo.image}
+                        alt={combo.title}
+                        fill
+                        className="object-cover hover:scale-105 transition-transform duration-500"
+                        sizes="(max-width: 768px) 100vw, 50vw"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-[#0F0F0F] via-transparent to-transparent opacity-80" />
+
+                      <div className="absolute top-3 left-3 flex items-center gap-2">
+                        <span className="bg-[#FF6A24] text-white text-[10px] font-heading font-bold px-2.5 py-0.5 rounded-full uppercase shadow-sm">
+                          {combo.badge}
+                        </span>
+                        <span className="bg-black/80 backdrop-blur-sm text-[#FFC107] text-[10px] font-heading font-semibold px-2 py-0.5 rounded-full border border-white/10">
+                          {combo.comboType === "single" ? "Solo Diner" : "Grand Sharing"}
+                        </span>
+                      </div>
+
+                      <div className="absolute top-3 right-3">
+                        <span className="text-xs text-green-400 font-semibold bg-green-950/80 border border-green-500/30 px-2.5 py-0.5 rounded-full">
+                          {combo.savings}
+                        </span>
+                      </div>
+
+                      <div className="absolute bottom-2 left-3 text-xs text-white/90 font-medium">
+                        👥 Serves: <span className="text-[#FFC107] font-semibold">{combo.serves}</span>
+                      </div>
+                    </div>
+
+                    {/* Details */}
+                    <div className="p-5">
+                      <h3 className="font-heading font-bold text-xl text-white">
+                        {combo.title}
+                      </h3>
+                      <p className="text-xs text-[#F4EBD6]/70 mt-1 mb-4 leading-relaxed">
+                        {combo.tagline}
+                      </p>
+
+                      {/* Items Checklist */}
+                      <ul className="space-y-1.5 mb-2 text-xs text-[#F4EBD6]/90 bg-white/[0.02] p-3 rounded-xl border border-white/5">
+                        {combo.items.map((i, idx) => (
+                          <li key={idx} className="flex items-center gap-2">
+                            <Check size={14} className="text-[#FF6A24] flex-shrink-0" />
+                            <span>{i}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  </div>
+
+                  {/* Footer: Price + Order + Platter */}
+                  <div className="p-5 pt-0">
+                    <div className="pt-3 border-t border-white/10 flex items-center justify-between gap-3">
+                      <div>
+                        <span className="text-2xl font-heading font-black text-[#FF6A24]">
+                          ₹{combo.price}
+                        </span>
+                        <span className="text-xs text-gray-500 line-through ml-2">
+                          ₹{combo.originalPrice}
+                        </span>
+                      </div>
+
+                      <div className="flex items-center gap-2">
+                        {/* Platter Add Button */}
+                        {inCartQty > 0 ? (
+                          <div className="inline-flex items-center bg-[#FF6A24] rounded-full text-white text-xs px-2 py-1 shadow-flame-sm">
+                            <button
+                              onClick={() => removeFromCart(combo.id)}
+                              className="p-0.5 hover:bg-black/20 rounded-full cursor-pointer"
+                              aria-label="Decrease"
+                            >
+                              <Minus size={12} />
+                            </button>
+                            <span className="px-1.5 font-bold">{inCartQty}</span>
+                            <button
+                              onClick={() => addToCart(combo.id)}
+                              className="p-0.5 hover:bg-black/20 rounded-full cursor-pointer"
+                              aria-label="Increase"
+                            >
+                              <Plus size={12} />
+                            </button>
+                          </div>
+                        ) : (
+                          <button
+                            onClick={() => addToCart(combo.id)}
+                            className="w-8 h-8 rounded-full border border-[#FF6A24]/40 text-[#FF6A24] hover:bg-[#FF6A24] hover:text-white flex items-center justify-center transition-colors cursor-pointer"
+                            title="Add combo to Platter Box"
+                            aria-label={`Add ${combo.title} to platter`}
+                          >
+                            <Plus size={15} />
+                          </button>
+                        )}
+
+                        {/* Direct Order WhatsApp */}
+                        <a
+                          href={getWhatsAppItemUrl(combo.title, combo.price)}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center gap-1.5 bg-[#25D366] hover:bg-[#20BA5A] text-white px-4 py-2 rounded-full font-heading font-semibold text-xs transition-colors shadow-sm"
+                        >
+                          <MessageCircle size={14} />
+                          <span>Order Combo</span>
+                        </a>
+                      </div>
+                    </div>
                   </div>
                 </div>
               );
             })}
-          </div>
-        </div>
-      )}
-      </section>
-
-      {/* =========================================================================
-          SECTION: COMBO DEALS & VALUE MEALS
-      ========================================================================= */}
-      <section id="combos" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-12">
-        <div className="bg-gradient-to-r from-[#181818] via-[#141414] to-[#181818] border border-white/10 rounded-[24px] p-6 sm:p-10 shadow-2xl">
-          <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 mb-8 pb-4 border-b border-white/10">
-            <div>
-              <span className="text-xs font-heading font-bold text-[#FF6A24] tracking-[0.25em] uppercase block mb-1">
-                VALUE FEASTS
-              </span>
-              <h2 className="font-heading font-extrabold text-2xl sm:text-4xl text-white">
-                Flamora Combo Club Deals
-              </h2>
-            </div>
-            <p className="text-xs sm:text-sm text-[#F4EBD6]/70 max-w-md">
-              Complete hunger-satisfying platters packed with live grilled mains, crispy sides, and dips. Meals from ₹99!
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {comboDeals.map((combo) => (
-              <div
-                key={combo.id}
-                className="bg-[#0F0F0F] rounded-2xl border border-white/10 p-6 flex flex-col justify-between hover:border-[#FF6A24]/40 transition-colors"
-              >
-                <div>
-                  <div className="flex items-start justify-between gap-2 mb-2">
-                    <span className="bg-[#FF6A24]/20 border border-[#FF6A24]/40 text-[#FF6A24] text-[10px] font-heading font-bold px-2.5 py-1 rounded-full uppercase">
-                      {combo.badge}
-                    </span>
-                    <span className="text-xs text-green-400 font-semibold bg-green-900/30 px-2 py-0.5 rounded-md">
-                      {combo.savings}
-                    </span>
-                  </div>
-
-                  <h3 className="font-heading font-bold text-xl text-white">
-                    {combo.title}
-                  </h3>
-                  <p className="text-xs text-[#F4EBD6]/70 mt-1 mb-4">
-                    {combo.tagline} · <span className="text-[#FFC107]">{combo.serves}</span>
-                  </p>
-
-                  <ul className="space-y-1.5 mb-6 text-xs text-[#F4EBD6]/85">
-                    {combo.items.map((i, idx) => (
-                      <li key={idx} className="flex items-center gap-2">
-                        <Check size={14} className="text-[#FF6A24] flex-shrink-0" />
-                        <span>{i}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-
-                <div className="pt-4 border-t border-white/10 flex items-center justify-between">
-                  <div>
-                    <span className="text-2xl font-heading font-black text-[#FF6A24]">
-                      ₹{combo.price}
-                    </span>
-                    <span className="text-xs text-gray-500 line-through ml-2">
-                      ₹{combo.originalPrice}
-                    </span>
-                  </div>
-
-                  <a
-                    href={getWhatsAppItemUrl(combo.title, combo.price)}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-1.5 bg-[#25D366] hover:bg-[#20BA5A] text-white px-5 py-2.5 rounded-full font-heading font-semibold text-xs transition-colors shadow-sm"
-                  >
-                    <MessageCircle size={14} />
-                    <span>Order Combo</span>
-                  </a>
-                </div>
-              </div>
-            ))}
           </div>
         </div>
       </section>
@@ -570,7 +746,7 @@ export default function MenuPage() {
                 </div>
                 <button
                   onClick={() => setCartOpen(false)}
-                  className="text-gray-400 hover:text-white p-1"
+                  className="text-gray-400 hover:text-white p-1 cursor-pointer"
                 >
                   <X size={20} />
                 </button>
@@ -580,7 +756,7 @@ export default function MenuPage() {
                 <div className="py-16 text-center text-gray-400">
                   <p className="text-sm">Your platter is empty.</p>
                   <p className="text-xs mt-1 text-gray-500">
-                    Click the &ldquo;+&rdquo; button on any menu item to build your combo.
+                    Click the &ldquo;+&rdquo; button on any menu item or combo to build your feast.
                   </p>
                 </div>
               ) : (
@@ -590,15 +766,15 @@ export default function MenuPage() {
                       key={item.id}
                       className="flex items-center justify-between p-3 bg-white/5 rounded-xl border border-white/5"
                     >
-                      <div>
-                        <p className="text-sm font-semibold text-white">{item.name}</p>
+                      <div className="min-w-0 flex-1 mr-2">
+                        <p className="text-sm font-semibold text-white truncate">{item.name}</p>
                         <p className="text-xs text-[#FF6A24]">₹{item.price} each</p>
                       </div>
 
-                      <div className="flex items-center gap-2">
+                      <div className="flex items-center gap-2 flex-shrink-0">
                         <button
                           onClick={() => removeFromCart(item.id)}
-                          className="w-6 h-6 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center text-xs"
+                          className="w-6 h-6 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center text-xs cursor-pointer"
                         >
                           -
                         </button>
@@ -607,7 +783,7 @@ export default function MenuPage() {
                         </span>
                         <button
                           onClick={() => addToCart(item.id)}
-                          className="w-6 h-6 rounded-full bg-[#FF6A24] text-white flex items-center justify-center text-xs"
+                          className="w-6 h-6 rounded-full bg-[#FF6A24] text-white flex items-center justify-center text-xs cursor-pointer"
                         >
                           +
                         </button>
@@ -618,7 +794,7 @@ export default function MenuPage() {
                   <div className="pt-2 text-right">
                     <button
                       onClick={clearCart}
-                      className="text-[11px] text-gray-400 hover:text-red-400 transition-colors"
+                      className="text-[11px] text-gray-400 hover:text-red-400 transition-colors cursor-pointer"
                     >
                       Clear platter
                     </button>
@@ -648,7 +824,7 @@ export default function MenuPage() {
                 </a>
 
                 <p className="text-[11px] text-center text-gray-400">
-                  Pre-fills all {cartTotalCount} items directly into WhatsApp for quick checkout.
+                  Pre-fills all {cartTotalCount} items directly into WhatsApp for instant confirmation.
                 </p>
               </div>
             )}

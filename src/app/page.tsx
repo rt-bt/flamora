@@ -27,7 +27,7 @@ export default function HomePage() {
     {
       title: "Flame Grills",
       subtitle: "Smoky · Juicy · Fresh",
-      startingPrice: "From ₹139",
+      startingPrice: "From ₹129",
       badge: "🔥 Bestseller",
       image: "/images/flame-grills.jpg",
       href: "/menu?category=Grills",
@@ -36,7 +36,7 @@ export default function HomePage() {
     {
       title: "Crispy Favourites",
       subtitle: "Crunch in every bite",
-      startingPrice: "From ₹99",
+      startingPrice: "From ₹79",
       badge: "⚡ Super Crunchy",
       image: "/images/crispy-favourites.jpg",
       href: "/menu?category=Fried",
@@ -45,16 +45,16 @@ export default function HomePage() {
     {
       title: "Kebabs & Tikka",
       subtitle: "Made for sharing",
-      startingPrice: "From ₹149",
+      startingPrice: "From ₹169",
       badge: "🍢 Sharing Special",
       image: "/images/kebabs-tikka.jpg",
-      href: "/menu?category=Kebabs",
+      href: "/menu?category=Grills",
       icon: UtensilsCrossed,
     },
     {
       title: "Veggie on Fire",
       subtitle: "Paneer · Pineapple",
-      startingPrice: "From ₹119",
+      startingPrice: "From ₹179",
       badge: "🌱 100% Pure Veg",
       image: "/images/veggie-fire.jpg",
       href: "/menu?category=Veg",
@@ -339,7 +339,7 @@ export default function HomePage() {
                   </Link>
 
                   <a
-                    href={getWhatsAppOrderUrl("Hi Flamora! I want to order a Combo Meal (Meals from ₹99). Please share current combo offers!")}
+                    href={getWhatsAppOrderUrl("Hi Flamora! I want to order a Combo Meal (Combos from ₹179). Please share today's menu!")}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="inline-flex items-center gap-1.5 bg-white/5 hover:bg-white/10 text-white border border-white/20 px-5 py-3 rounded-full font-heading font-medium text-xs sm:text-sm transition-all"
