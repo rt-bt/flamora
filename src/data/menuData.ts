@@ -197,7 +197,7 @@ export const menuItems: MenuItem[] = [
     spiceLevel: 2,
     description: "1 Grilled or Fried Chicken Leg + Crispy French Fries + Signature Dip + Chilled Drink.",
     portion: "Combo for 1 Person",
-    image: "/images/leg-combo.jpg",
+    image: "/images/flamora-leg-combo.jpg",
     tags: ["Single Combo", "Best Value"],
   },
   {
@@ -473,7 +473,7 @@ export const comboDeals: ComboDeal[] = [
       "Signature Dip",
       "1 Chilled Soft Drink",
     ],
-    image: "/images/leg-combo.jpg",
+    image: "/images/flamora-leg-combo.jpg",
     isVeg: false,
     serves: "1 Person",
   },
