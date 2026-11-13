@@ -433,7 +433,7 @@ export const menuItems: MenuItem[] = [
     spiceLevel: 1,
     description: "Pure, chilled packaged drinking water bottle.",
     portion: "500ml Sealed Bottle",
-    image: "/images/mineral-water.jpg",
+    image: "/images/flamora-mineral-water.jpg",
     tags: ["Pure & Safe"],
   },
 ];
