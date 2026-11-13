@@ -1,3 +1,11 @@
+export interface ItemVariant {
+  id: string;
+  name: string; // e.g. "1 Pc", "2 Pc", "4 Pc", "6 Pc"
+  portion: string;
+  price: number;
+  originalPrice?: number;
+}
+
 export interface MenuItem {
   id: string;
   name: string;
@@ -11,6 +19,7 @@ export interface MenuItem {
   portion: string;
   image: string;
   tags?: string[];
+  variants?: ItemVariant[];
 }
 
 export interface ComboDeal {
@@ -116,59 +125,48 @@ export const menuItems: MenuItem[] = [
   // 2. FRIED CHICKEN (CRISPY. JUICY. IRRESISTIBLE.)
   // =========================================================================
   {
-    id: "crispy-chicken-1pc",
-    name: "Crispy Chicken – 1 Pc",
+    id: "crispy-chicken",
+    name: "Crispy Chicken",
     category: "Fried",
     price: 79,
     originalPrice: 99,
     isVeg: false,
-    spiceLevel: 1,
-    description: "Single cut of fresh chicken double-breaded in Flamora herb flour and fried to a golden crackling shatter. Juicy on the inside, crunchy on the outside.",
-    portion: "1 Large Piece",
-    image: "/images/crispy-chicken-1pc.jpg",
-    tags: ["Single Bite", "Golden Crunch"],
-  },
-  {
-    id: "crispy-chicken-2pc",
-    name: "Crispy Chicken – 2 Pc",
-    category: "Fried",
-    price: 149,
-    originalPrice: 179,
-    isVeg: false,
     isBestseller: true,
     spiceLevel: 1,
-    description: "Two pieces of golden, crunchy fried chicken seasoned with house pepper salt. Perfectly satisfying quick meal or snack.",
-    portion: "2 Pieces · Serves 1",
-    image: "/images/crispy-chicken-2pc.jpg",
-    tags: ["Popular", "Golden Crunch"],
-  },
-  {
-    id: "crispy-chicken-4pc",
-    name: "Crispy Chicken – 4 Pc",
-    category: "Fried",
-    price: 279,
-    originalPrice: 329,
-    isVeg: false,
-    isBestseller: true,
-    spiceLevel: 1,
-    description: "Four succulent fried chicken pieces with a crunchy, flaky crust and tender, steamy meat. Ideal for sharing between two friends.",
-    portion: "4 Pieces · Serves 2",
+    description: "Golden crackling crispy fried chicken double-breaded in Flamora secret herbs & spice flour. Crunchy on the outside, juicy on the inside. Select your piece count below.",
+    portion: "1 Large Piece · Serves 1",
     image: "/images/crispy-chicken-4pc.jpg",
-    tags: ["Sharing", "Value Pack"],
-  },
-  {
-    id: "crispy-chicken-6pc",
-    name: "Crispy Chicken – 6 Pc",
-    category: "Fried",
-    price: 399,
-    originalPrice: 469,
-    isVeg: false,
-    isBestseller: true,
-    spiceLevel: 2,
-    description: "Grand sharing party bucket of six golden fried chicken pieces. Dusted with Flamora spicy seasoning for maximum crunch satisfaction.",
-    portion: "6 Pieces · Serves 2-3",
-    image: "/images/crispy-chicken-6pc.jpg",
-    tags: ["Party Bucket", "Max Crunch"],
+    tags: ["Bestseller", "Golden Crunch", "Custom Pieces"],
+    variants: [
+      {
+        id: "crispy-chicken-1pc",
+        name: "1 Pc",
+        portion: "1 Large Piece · Serves 1",
+        price: 79,
+        originalPrice: 99,
+      },
+      {
+        id: "crispy-chicken-2pc",
+        name: "2 Pc",
+        portion: "2 Pieces · Serves 1",
+        price: 149,
+        originalPrice: 179,
+      },
+      {
+        id: "crispy-chicken-4pc",
+        name: "4 Pc",
+        portion: "4 Pieces · Serves 2",
+        price: 279,
+        originalPrice: 329,
+      },
+      {
+        id: "crispy-chicken-6pc",
+        name: "6 Pc",
+        portion: "6 Pieces · Serves 2-3 Party Bucket",
+        price: 399,
+        originalPrice: 469,
+      },
+    ],
   },
 
   // =========================================================================

@@ -34,6 +34,16 @@ export default function MenuPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [cart, setCart] = useState<{ [id: string]: number }>({});
   const [cartOpen, setCartOpen] = useState(false);
+  const [selectedVariants, setSelectedVariants] = useState<{ [itemId: string]: string }>({
+    "crispy-chicken": "crispy-chicken-1pc",
+  });
+
+  // Helper to get active variant for an item
+  const getActiveVariant = (item: MenuItem) => {
+    if (!item.variants || item.variants.length === 0) return null;
+    const currentVariantId = selectedVariants[item.id] || item.variants[0].id;
+    return item.variants.find((v) => v.id === currentVariantId) || item.variants[0];
+  };
 
   // Cart operations
   const addToCart = (id: string) => {
@@ -57,12 +67,37 @@ export default function MenuPage() {
 
   const clearCart = () => setCart({});
 
-  // Cart totals calculation (supports both menuItems and comboDeals)
+  // Cart totals calculation (supports standalone items, variant items, and combos)
   const cartItemsDetailed = useMemo(() => {
     return Object.entries(cart)
       .map(([id, qty]) => {
+        // Direct item match
         const item = menuItems.find((m) => m.id === id);
         if (item) return { ...item, quantity: qty };
+
+        // Match in item variants (e.g. crispy-chicken-1pc, crispy-chicken-2pc)
+        for (const parentItem of menuItems) {
+          if (parentItem.variants) {
+            const variant = parentItem.variants.find((v) => v.id === id);
+            if (variant) {
+              return {
+                id: variant.id,
+                name: `${parentItem.name} (${variant.name})`,
+                category: parentItem.category,
+                price: variant.price,
+                originalPrice: variant.originalPrice,
+                isVeg: parentItem.isVeg,
+                spiceLevel: parentItem.spiceLevel,
+                description: variant.portion,
+                portion: variant.portion,
+                image: parentItem.image,
+                quantity: qty,
+              };
+            }
+          }
+        }
+
+        // Match in combo deals
         const combo = comboDeals.find((c) => c.id === id);
         if (combo) {
           return {
@@ -123,7 +158,10 @@ export default function MenuPage() {
         const matchesTags = item.tags?.some((t) =>
           t.toLowerCase().includes(query)
         );
-        if (!matchesName && !matchesDesc && !matchesTags) return false;
+        const matchesVariants = item.variants?.some((v) =>
+          v.name.toLowerCase().includes(query)
+        );
+        if (!matchesName && !matchesDesc && !matchesTags && !matchesVariants) return false;
       }
       return true;
     });
@@ -245,7 +283,7 @@ export default function MenuPage() {
                 {searchQuery && (
                   <button
                     onClick={() => setSearchQuery("")}
-                    className="absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white"
+                    className="absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white cursor-pointer"
                   >
                     <X size={13} />
                   </button>
@@ -303,7 +341,14 @@ export default function MenuPage() {
             {/* Mobile Card Layout (Polished, Fast, Native-App Quality) */}
             <div className="sm:hidden space-y-3">
               {filteredItems.map((item) => {
-                const inCartQty = cart[item.id] || 0;
+                const activeVariant = getActiveVariant(item);
+                const currentPrice = activeVariant ? activeVariant.price : item.price;
+                const currentOriginalPrice = activeVariant ? activeVariant.originalPrice : item.originalPrice;
+                const currentPortion = activeVariant ? activeVariant.portion : item.portion;
+                const currentCartId = activeVariant ? activeVariant.id : item.id;
+                const currentItemName = activeVariant ? `${item.name} (${activeVariant.name})` : item.name;
+                const inCartQty = cart[currentCartId] || 0;
+
                 return (
                   <div
                     key={`mob-${item.id}`}
@@ -341,7 +386,7 @@ export default function MenuPage() {
                         </div>
 
                         <p className="text-[11px] text-[#FFC107] font-medium mt-0.5">
-                          {item.portion}
+                          {currentPortion}
                         </p>
 
                         <p className="text-[11px] text-[#F4EBD6]/70 line-clamp-2 mt-1 leading-snug">
@@ -350,15 +395,55 @@ export default function MenuPage() {
                       </div>
                     </div>
 
+                    {/* Interactive Piece Selector (if item has variants like Crispy Chicken 1, 2, 4, 6 Pc) */}
+                    {item.variants && item.variants.length > 0 && (
+                      <div className="bg-black/50 p-2 rounded-xl border border-white/5 space-y-1">
+                        <div className="flex items-center justify-between text-[10px] font-heading">
+                          <span className="text-[#FFC107] font-semibold">Select Quantity:</span>
+                          <span className="text-[#FF6A24] font-bold">
+                            {activeVariant?.name} = ₹{activeVariant?.price}
+                          </span>
+                        </div>
+                        <div className="grid grid-cols-4 gap-1.5">
+                          {item.variants.map((v) => {
+                            const isSelected = activeVariant?.id === v.id;
+                            return (
+                              <button
+                                key={v.id}
+                                type="button"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  setSelectedVariants((prev) => ({
+                                    ...prev,
+                                    [item.id]: v.id,
+                                  }));
+                                }}
+                                className={`py-1 px-1 rounded-lg text-center font-heading transition-all cursor-pointer ${
+                                  isSelected
+                                    ? "bg-[#FF6A24] text-white font-bold shadow-sm"
+                                    : "bg-white/5 hover:bg-white/10 text-gray-300 border border-white/5"
+                                }`}
+                              >
+                                <div className="text-[11px] leading-tight">{v.name}</div>
+                                <div className={`text-[9px] mt-0.5 ${isSelected ? "text-white" : "text-[#FF6A24]"}`}>
+                                  ₹{v.price}
+                                </div>
+                              </button>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    )}
+
                     {/* Mobile Bottom Row: Price & Actions */}
                     <div className="flex items-center justify-between pt-2 border-t border-white/5">
                       <div className="flex items-baseline gap-1.5">
                         <span className="font-heading font-black text-base text-[#FF6A24]">
-                          ₹{item.price}
+                          ₹{currentPrice}
                         </span>
-                        {item.originalPrice && (
+                        {currentOriginalPrice && (
                           <span className="text-[11px] text-gray-500 line-through">
-                            ₹{item.originalPrice}
+                            ₹{currentOriginalPrice}
                           </span>
                         )}
                       </div>
@@ -366,7 +451,7 @@ export default function MenuPage() {
                       <div className="flex items-center gap-2">
                         {/* Direct WhatsApp Order */}
                         <a
-                          href={getWhatsAppItemUrl(item.name, item.price)}
+                          href={getWhatsAppItemUrl(currentItemName, currentPrice)}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="flex items-center gap-1 bg-[#25D366]/20 text-[#25D366] hover:bg-[#25D366] hover:text-white px-2.5 py-1 rounded-full text-[11px] font-heading font-semibold transition-colors"
@@ -380,16 +465,16 @@ export default function MenuPage() {
                         {inCartQty > 0 ? (
                           <div className="inline-flex items-center bg-[#FF6A24] rounded-full text-white text-xs px-1.5 py-0.5">
                             <button
-                              onClick={() => removeFromCart(item.id)}
-                              className="p-1 hover:bg-black/20 rounded-full"
+                              onClick={() => removeFromCart(currentCartId)}
+                              className="p-1 hover:bg-black/20 rounded-full cursor-pointer"
                               aria-label="Decrease"
                             >
                               <Minus size={12} />
                             </button>
                             <span className="px-1.5 font-bold">{inCartQty}</span>
                             <button
-                              onClick={() => addToCart(item.id)}
-                              className="p-1 hover:bg-black/20 rounded-full"
+                              onClick={() => addToCart(currentCartId)}
+                              className="p-1 hover:bg-black/20 rounded-full cursor-pointer"
                               aria-label="Increase"
                             >
                               <Plus size={12} />
@@ -397,9 +482,9 @@ export default function MenuPage() {
                           </div>
                         ) : (
                           <button
-                            onClick={() => addToCart(item.id)}
-                            className="w-7 h-7 rounded-full border border-[#FF6A24] text-[#FF6A24] flex items-center justify-center hover:bg-[#FF6A24] hover:text-white transition-colors"
-                            aria-label={`Add ${item.name}`}
+                            onClick={() => addToCart(currentCartId)}
+                            className="w-7 h-7 rounded-full border border-[#FF6A24] text-[#FF6A24] flex items-center justify-center hover:bg-[#FF6A24] hover:text-white transition-colors cursor-pointer"
+                            aria-label={`Add ${currentItemName}`}
                           >
                             <Plus size={14} />
                           </button>
@@ -414,7 +499,14 @@ export default function MenuPage() {
             {/* Desktop / Tablet Grid */}
             <div className="hidden sm:grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
               {filteredItems.map((item) => {
-                const inCartQty = cart[item.id] || 0;
+                const activeVariant = getActiveVariant(item);
+                const currentPrice = activeVariant ? activeVariant.price : item.price;
+                const currentOriginalPrice = activeVariant ? activeVariant.originalPrice : item.originalPrice;
+                const currentPortion = activeVariant ? activeVariant.portion : item.portion;
+                const currentCartId = activeVariant ? activeVariant.id : item.id;
+                const currentItemName = activeVariant ? `${item.name} (${activeVariant.name})` : item.name;
+                const inCartQty = cart[currentCartId] || 0;
+
                 return (
                   <div
                     key={item.id}
@@ -469,12 +561,56 @@ export default function MenuPage() {
                         </div>
 
                         <p className="text-[11px] text-[#FFC107] font-medium mt-0.5">
-                          {item.portion}
+                          {currentPortion}
                         </p>
 
                         <p className="text-xs text-[#F4EBD6]/75 mt-2 line-clamp-2 leading-relaxed">
                           {item.description}
                         </p>
+
+                        {/* Interactive Pieces Selector (Desktop) */}
+                        {item.variants && item.variants.length > 0 && (
+                          <div className="mt-3 bg-black/50 p-2.5 rounded-xl border border-white/5">
+                            <div className="flex items-center justify-between text-[11px] mb-1.5 font-heading">
+                              <span className="text-[#FFC107] font-semibold">Choose Quantity:</span>
+                              <span className="text-xs font-bold text-[#FF6A24]">
+                                {activeVariant?.name} = ₹{activeVariant?.price}
+                              </span>
+                            </div>
+                            <div className="grid grid-cols-4 gap-1.5">
+                              {item.variants.map((v) => {
+                                const isSelected = activeVariant?.id === v.id;
+                                return (
+                                  <button
+                                    key={v.id}
+                                    type="button"
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      setSelectedVariants((prev) => ({
+                                        ...prev,
+                                        [item.id]: v.id,
+                                      }));
+                                    }}
+                                    className={`py-1.5 px-1 rounded-lg text-center font-heading transition-all cursor-pointer ${
+                                      isSelected
+                                        ? "bg-gradient-to-r from-[#FF6A24] to-[#E55815] text-white shadow-flame-sm scale-[1.02] border border-[#FF6A24]"
+                                        : "bg-white/5 hover:bg-white/10 text-gray-300 border border-white/5"
+                                    }`}
+                                  >
+                                    <div className="text-xs font-black">{v.name}</div>
+                                    <div
+                                      className={`text-[10px] mt-0.5 ${
+                                        isSelected ? "text-white font-bold" : "text-[#FF6A24] font-semibold"
+                                      }`}
+                                    >
+                                      ₹{v.price}
+                                    </div>
+                                  </button>
+                                );
+                              })}
+                            </div>
+                          </div>
+                        )}
 
                         {/* Tags */}
                         {item.tags && item.tags.length > 0 && (
@@ -497,11 +633,11 @@ export default function MenuPage() {
                       <div className="flex items-center justify-between mb-3 border-t border-white/5 pt-3">
                         <div className="flex items-baseline gap-1.5">
                           <span className="font-heading font-extrabold text-xl text-[#FF6A24]">
-                            ₹{item.price}
+                            ₹{currentPrice}
                           </span>
-                          {item.originalPrice && (
+                          {currentOriginalPrice && (
                             <span className="text-xs text-gray-500 line-through">
-                              ₹{item.originalPrice}
+                              ₹{currentOriginalPrice}
                             </span>
                           )}
                         </div>
@@ -511,7 +647,7 @@ export default function MenuPage() {
                           {inCartQty > 0 ? (
                             <div className="inline-flex items-center bg-[#FF6A24] rounded-full text-white text-xs px-1.5 py-0.5 shadow-flame-sm">
                               <button
-                                onClick={() => removeFromCart(item.id)}
+                                onClick={() => removeFromCart(currentCartId)}
                                 className="p-1 hover:bg-black/20 rounded-full cursor-pointer"
                                 aria-label="Reduce count"
                               >
@@ -519,7 +655,7 @@ export default function MenuPage() {
                               </button>
                               <span className="px-1.5 font-bold">{inCartQty}</span>
                               <button
-                                onClick={() => addToCart(item.id)}
+                                onClick={() => addToCart(currentCartId)}
                                 className="p-1 hover:bg-black/20 rounded-full cursor-pointer"
                                 aria-label="Increase count"
                               >
@@ -528,10 +664,10 @@ export default function MenuPage() {
                             </div>
                           ) : (
                             <button
-                              onClick={() => addToCart(item.id)}
+                              onClick={() => addToCart(currentCartId)}
                               className="w-8 h-8 rounded-full bg-[#FF6A24]/15 hover:bg-[#FF6A24] text-[#FF6A24] hover:text-white border border-[#FF6A24]/40 flex items-center justify-center transition-all duration-200 cursor-pointer"
                               title="Add to Platter Box"
-                              aria-label={`Add ${item.name} to platter`}
+                              aria-label={`Add ${currentItemName} to platter`}
                             >
                               <Plus size={16} />
                             </button>
@@ -541,7 +677,7 @@ export default function MenuPage() {
 
                       {/* Direct Single Item WhatsApp Order Button */}
                       <a
-                        href={getWhatsAppItemUrl(item.name, item.price)}
+                        href={getWhatsAppItemUrl(currentItemName, currentPrice)}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="w-full flex items-center justify-center gap-2 bg-[#25D366]/15 hover:bg-[#25D366] text-[#25D366] hover:text-white border border-[#25D366]/30 py-2 px-3 rounded-xl text-xs font-heading font-semibold transition-all duration-300"
