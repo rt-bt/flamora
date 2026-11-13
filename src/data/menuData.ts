@@ -211,7 +211,7 @@ export const menuItems: MenuItem[] = [
     spiceLevel: 2,
     description: "6 Pc Smoky Boneless Chicken Tikka + Crispy French Fries + Mint Dip + Chilled Drink.",
     portion: "Combo for 1-2 Persons",
-    image: "/images/tikka-combo.jpg",
+    image: "/images/flamora-tikka-combo.jpg",
     tags: ["Single Combo", "Smoky Feast"],
   },
   {
@@ -492,7 +492,7 @@ export const comboDeals: ComboDeal[] = [
       "Tandoori Mint Dip",
       "1 Chilled Soft Drink",
     ],
-    image: "/images/tikka-combo.jpg",
+    image: "/images/flamora-tikka-combo.jpg",
     isVeg: false,
     serves: "1-2 Persons",
   },
