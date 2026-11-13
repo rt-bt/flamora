@@ -14,7 +14,7 @@ export default function JsonLd() {
       `${siteConfig.seo.siteUrl}/images/combo-club.jpg`,
     ],
     telephone: [siteConfig.phoneRaw, siteConfig.phoneRaw2],
-    email: siteConfig.email,
+    email: [siteConfig.emails.info, siteConfig.emails.support],
     url: siteConfig.seo.siteUrl,
     servesCuisine: [
       "Barbecue",

@@ -55,7 +55,7 @@ export default function TermsPage() {
           <section className="space-y-2 bg-[#141414] p-6 rounded-2xl border border-white/5">
             <h2 className="font-heading font-bold text-lg text-white">5. Contact Information</h2>
             <p>
-              For any questions regarding our terms or food safety policies, visit us at {siteConfig.address.full} or call {siteConfig.phoneDisplay}.
+              For any questions regarding our terms or food safety policies, visit us at {siteConfig.address.full}, call {siteConfig.phoneDisplay} / {siteConfig.phoneDisplay2}, or email us at {siteConfig.emails.support} (or {siteConfig.emails.info}).
             </p>
           </section>
         </div>

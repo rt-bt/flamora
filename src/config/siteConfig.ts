@@ -12,6 +12,11 @@ export interface SiteConfig {
   whatsappNumber: string;
   whatsappOrderBaseUrl: string;
   email: string;
+  emailSupport: string;
+  emails: {
+    info: string;
+    support: string;
+  };
   address: {
     street: string;
     locality: string;
@@ -62,7 +67,12 @@ export const siteConfig: SiteConfig = {
   ],
   whatsappNumber: "918797315004",
   whatsappOrderBaseUrl: "https://wa.me/918797315004",
-  email: "hello@flamoragrill.com",
+  email: "info@flamorafood.com",
+  emailSupport: "support@flamorafood.com",
+  emails: {
+    info: "info@flamorafood.com",
+    support: "support@flamorafood.com",
+  },
   address: {
     street: "Near Bypass, Bariyarpur",
     locality: "Bariyarpur",

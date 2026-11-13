@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
-import { Phone, MapPin, CheckCircle2, MessageCircle } from "lucide-react";
+import { Phone, MapPin, CheckCircle2, MessageCircle, Mail } from "lucide-react";
 import Logo from "./Logo";
 import { siteConfig, getWhatsAppOrderUrl } from "@/config/siteConfig";
 
@@ -150,6 +150,23 @@ export default function Footer() {
                     className="hover:text-[#FF6A24] transition-colors"
                   >
                     {siteConfig.phoneDisplay2}
+                  </a>
+                </div>
+              </li>
+              <li className="flex items-start gap-2.5">
+                <Mail size={16} className="text-[#FF6A24] mt-0.5 flex-shrink-0" />
+                <div className="flex flex-col gap-1 text-xs">
+                  <a
+                    href={`mailto:${siteConfig.emails.info}`}
+                    className="hover:text-[#FF6A24] transition-colors"
+                  >
+                    {siteConfig.emails.info}
+                  </a>
+                  <a
+                    href={`mailto:${siteConfig.emails.support}`}
+                    className="hover:text-[#FF6A24] transition-colors text-white/70"
+                  >
+                    {siteConfig.emails.support}
                   </a>
                 </div>
               </li>

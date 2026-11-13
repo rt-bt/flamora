@@ -5,6 +5,7 @@ import {
   MapPin,
   Clock,
   Phone,
+  Mail,
   MessageCircle,
   ExternalLink,
   Send,
@@ -141,6 +142,31 @@ export default function FindUsPage() {
                         className="text-[#FF6A24] hover:underline"
                       >
                         {siteConfig.phoneDisplay2}
+                      </a>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Email Support Block */}
+                <div className="flex items-start gap-3.5">
+                  <div className="w-10 h-10 rounded-xl bg-[#FF6A24]/10 border border-[#FF6A24]/30 flex items-center justify-center text-[#FF6A24] flex-shrink-0 mt-0.5">
+                    <Mail size={20} />
+                  </div>
+                  <div>
+                    <p className="font-semibold text-white">Official Email Enquiries</p>
+                    <div className="mt-1 flex flex-wrap items-center gap-2 text-xs sm:text-sm font-semibold">
+                      <a
+                        href={`mailto:${siteConfig.emails.info}`}
+                        className="text-[#FF6A24] hover:underline"
+                      >
+                        {siteConfig.emails.info}
+                      </a>
+                      <span className="text-white/30">•</span>
+                      <a
+                        href={`mailto:${siteConfig.emails.support}`}
+                        className="text-[#FF6A24] hover:underline"
+                      >
+                        {siteConfig.emails.support}
                       </a>
                     </div>
                   </div>
