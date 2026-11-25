@@ -371,6 +371,20 @@ export const menuItems: MenuItem[] = [
     image: "/images/veggie-fire.jpg",
     tags: ["Pure Veg", "Sweet & Smoky", "Unique"],
   },
+  {
+    id: "soya-chaap",
+    name: "Soya Chaap",
+    category: "Veg",
+    price: 199,
+    originalPrice: 239,
+    isVeg: true,
+    isBestseller: true,
+    spiceLevel: 2,
+    description: "Tender protein-rich soya chaap chunks marinated in creamy spiced curd and tandoori masala, char-roasted on live coals and served with mint chutney & laccha onions.",
+    portion: "Full Plate · Serves 1-2",
+    image: "/images/soya-chaap.jpg",
+    tags: ["Pure Veg", "Charcoal Smoked", "Bestseller"],
+  },
 
   // =========================================================================
   // 6. DRINKS (ICE COLD BEVERAGES)
