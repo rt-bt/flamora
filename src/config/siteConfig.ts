@@ -113,7 +113,7 @@ export const siteConfig: SiteConfig = {
       "Crispy Fried Chicken Bihar",
       "Tandoori Kebabs Motihari",
       "Food Delivery Motihari",
-      "Halal Grill Restaurant Bihar",
+      "Live Charcoal Grill Restaurant Bihar",
       "Fast Food Marine Drive Motihari",
       "Grill Combos Motihari",
     ],

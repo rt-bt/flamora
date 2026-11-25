@@ -4,8 +4,10 @@ import Link from "next/link";
 import {
   Flame,
   Drumstick,
+  Crown,
   UtensilsCrossed,
   Sparkles,
+  CupSoda,
   ChefHat,
   Heart,
   Smile,
@@ -25,40 +27,58 @@ import CustomerReviews from "@/components/CustomerReviews";
 export default function HomePage() {
   const signatureCategories = [
     {
-      title: "Flame Grills",
-      subtitle: "Smoky · Juicy · Fresh",
+      title: "Grill (Smoky)",
+      subtitle: "Smoky · Juicy · Live Charcoal",
       startingPrice: "From ₹129",
-      badge: "🔥 Bestseller",
+      badge: "🔥 Charcoal Special",
       image: "/images/flame-grills.jpg",
-      href: "/menu?category=Grills",
+      href: "/menu?category=Grills#menu-catalog",
       icon: Flame,
     },
     {
-      title: "Crispy Favourites",
-      subtitle: "Crunch in every bite",
+      title: "Fried Chicken",
+      subtitle: "Crunch in every bite · Golden crispy",
       startingPrice: "From ₹79",
       badge: "⚡ Super Crunchy",
       image: "/images/flamora-crispy-chicken.jpg",
-      href: "/menu?category=Fried",
+      href: "/menu?category=Fried#menu-catalog",
       icon: Drumstick,
     },
     {
-      title: "Kebabs & Tikka",
-      subtitle: "Made for sharing",
-      startingPrice: "From ₹169",
-      badge: "🍢 Sharing Special",
-      image: "/images/flamora-chicken-tikka.jpg",
-      href: "/menu?category=Grills",
+      title: "Combos & Feasts",
+      subtitle: "Single & family mega sharing meals",
+      startingPrice: "From ₹179",
+      badge: "👑 Value Deals",
+      image: "/images/flamora-signature-combo.jpg",
+      href: "/menu?category=Combos#menu-catalog",
+      icon: Crown,
+    },
+    {
+      title: "Sides & Dips",
+      subtitle: "Peri-peri fries, house dips & salads",
+      startingPrice: "From ₹20",
+      badge: "🍟 Hot & Fresh",
+      image: "/images/peri-peri-fries.jpg",
+      href: "/menu?category=Sides#menu-catalog",
       icon: UtensilsCrossed,
     },
     {
-      title: "Veggie on Fire",
-      subtitle: "Paneer · Pineapple",
+      title: "Pure Veg",
+      subtitle: "Charcoal paneer & sweet pine grill",
       startingPrice: "From ₹179",
       badge: "🌱 100% Pure Veg",
       image: "/images/veggie-fire.jpg",
-      href: "/menu?category=Veg",
+      href: "/menu?category=Veg#menu-catalog",
       icon: Sparkles,
+    },
+    {
+      title: "Chilled Drinks",
+      subtitle: "Special shikanji & ice-cold sodas",
+      startingPrice: "From ₹20",
+      badge: "🧊 Ice Cold",
+      image: "/images/lemon-drink.jpg",
+      href: "/menu?category=Drinks#menu-catalog",
+      icon: CupSoda,
     },
   ];
 
@@ -195,7 +215,7 @@ export default function HomePage() {
                 </div>
                 <div className="flex items-center gap-1.5">
                   <ShieldCheck size={13} className="text-[#FF6A24]" />
-                  <span>Fresh Halal Quality</span>
+                  <span>100% Fresh &amp; Hygienic</span>
                 </div>
                 <div className="flex items-center gap-1.5">
                   <Clock size={13} className="text-[#FFC107]" />
@@ -224,8 +244,8 @@ export default function HomePage() {
             </h2>
           </div>
 
-          {/* 4 Rounded Cards Grid */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+          {/* 6 Category Cards Grid */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6">
             {signatureCategories.map((item) => {
               const IconComponent = item.icon;
               return (
@@ -331,7 +351,7 @@ export default function HomePage() {
 
                 <div className="pt-2 flex flex-wrap items-center gap-3">
                   <Link
-                    href="/menu#combos"
+                    href="/menu?category=Combos#combos"
                     className="inline-flex items-center gap-2 bg-[#FF6A24] hover:bg-[#E55815] text-white px-7 py-3 rounded-full font-heading font-semibold text-xs sm:text-sm transition-all duration-200 shadow-flame-sm hover:-translate-y-0.5"
                   >
                     <span>View Combos</span>

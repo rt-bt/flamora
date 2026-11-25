@@ -39,9 +39,9 @@ export default function TermsPage() {
           </section>
 
           <section className="space-y-2 bg-[#141414] p-6 rounded-2xl border border-white/5">
-            <h2 className="font-heading font-bold text-lg text-white">3. Food Quality &amp; Halal Assurance</h2>
+            <h2 className="font-heading font-bold text-lg text-white">3. Food Quality &amp; Hygiene Assurance</h2>
             <p>
-              All meat used in our live charcoal grills, crispy fried chicken, and kebabs is 100% Halal certified and prepared under strict hygiene and sanitation controls in Motihari, Bihar.
+              All ingredients used in our live charcoal grills, crispy fried chicken, and veg specials are 100% farm-fresh and prepared under strict hygiene and sanitation controls in Motihari, Bihar.
             </p>
           </section>
 

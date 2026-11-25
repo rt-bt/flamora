@@ -30,8 +30,8 @@ export default function AboutPage() {
     },
     {
       icon: ShieldCheck,
-      title: "100% Halal & Clean",
-      desc: "Strict adherence to certified halal sourcing, purified RO water for all preparations, and rigorous open kitchen sanitation standards.",
+      title: "100% Fresh & Clean",
+      desc: "Strict adherence to farm-fresh sourcing, purified RO water for all preparations, and rigorous open kitchen sanitation standards.",
     },
     {
       icon: HeartHandshake,
@@ -147,7 +147,7 @@ export default function AboutPage() {
               <div className="w-[1px] h-10 bg-white/10" />
               <div>
                 <p className="font-heading font-black text-3xl text-[#FF6A24]">100%</p>
-                <p className="text-xs text-[#F4EBD6]/70 uppercase tracking-wider">Halal &amp; Fresh</p>
+                <p className="text-xs text-[#F4EBD6]/70 uppercase tracking-wider">Fresh &amp; Hygienic</p>
               </div>
               <div className="w-[1px] h-10 bg-white/10" />
               <div>

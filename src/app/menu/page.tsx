@@ -1,7 +1,8 @@
 "use client";
 
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect, Suspense } from "react";
 import Image from "next/image";
+import { useSearchParams } from "next/navigation";
 import {
   Search,
   Flame,
@@ -38,8 +39,64 @@ import {
   getWhatsAppOrderUrl,
 } from "@/config/siteConfig";
 
-export default function MenuPage() {
-  const [selectedCategory, setSelectedCategory] = useState<string>("all");
+function VegBadge({ isVeg, size = "md" }: { isVeg: boolean; size?: "sm" | "md" }) {
+  const boxClass = size === "sm" ? "w-3 h-3 border" : "w-3.5 h-3.5 border-2";
+  return (
+    <span
+      className={`${boxClass} flex-shrink-0 inline-flex items-center justify-center rounded-[2px] ${
+        isVeg ? "border-green-500" : "border-red-500"
+      }`}
+      title={isVeg ? "Pure Veg" : "Non-Veg"}
+      aria-label={isVeg ? "Pure Veg" : "Non-Veg"}
+    >
+      <span
+        className={`w-1.5 h-1.5 rounded-full ${
+          isVeg ? "bg-green-500" : "bg-red-500"
+        }`}
+      />
+    </span>
+  );
+}
+
+function MenuContent() {
+  const searchParams = useSearchParams();
+  const categoryParam = searchParams.get("category");
+
+  const [selectedCategory, setSelectedCategory] = useState<string>(() => {
+    if (categoryParam) {
+      const match = menuCategories.find(
+        (c) => c.id.toLowerCase() === categoryParam.toLowerCase()
+      );
+      if (match) return match.id;
+    }
+    return "all";
+  });
+
+  useEffect(() => {
+    if (categoryParam) {
+      const match = menuCategories.find(
+        (c) => c.id.toLowerCase() === categoryParam.toLowerCase()
+      );
+      if (match) {
+        setSelectedCategory(match.id);
+      }
+    } else {
+      setSelectedCategory("all");
+    }
+  }, [categoryParam]);
+
+  const handleCategorySelect = (catId: string) => {
+    setSelectedCategory(catId);
+    if (typeof window !== "undefined") {
+      const url = new URL(window.location.href);
+      if (catId === "all") {
+        url.searchParams.delete("category");
+      } else {
+        url.searchParams.set("category", catId);
+      }
+      window.history.replaceState({}, "", url.toString());
+    }
+  };
   const [vegFilter, setVegFilter] = useState<"all" | "veg" | "non-veg">("all");
   const [comboTypeFilter, setComboTypeFilter] = useState<"all" | "single" | "family">("all");
   const [searchQuery, setSearchQuery] = useState("");
@@ -307,7 +364,12 @@ export default function MenuPage() {
   const filteredItems = useMemo(() => {
     return menuItems.filter((item) => {
       // Category filter
-      if (selectedCategory !== "all" && item.category !== selectedCategory) {
+      if (selectedCategory === "Veg") {
+        // Show all Pure Veg items (isVeg === true)
+        if (!item.isVeg) {
+          return false;
+        }
+      } else if (selectedCategory !== "all" && item.category !== selectedCategory) {
         return false;
       }
       // Veg / Non-Veg filter
@@ -360,7 +422,7 @@ export default function MenuPage() {
           {/* Quick Stats Pill */}
           <div className="pt-2 flex flex-wrap justify-center items-center gap-4 sm:gap-6 text-xs text-[#FFC107]">
             <span className="flex items-center gap-1.5">
-              <Flame size={14} className="text-[#FF6A24]" /> 100% Halal Meats
+              <Flame size={14} className="text-[#FF6A24]" /> 100% Fresh Farm-Sourced
             </span>
             <span className="hidden sm:inline">•</span>
             <span className="flex items-center gap-1.5">
@@ -375,7 +437,7 @@ export default function MenuPage() {
       {/* =========================================================================
           CONTROLS: CATEGORY TABS, VEG FILTER & SEARCH
       ========================================================================= */}
-      <section className="sticky top-[69px] z-30 bg-[#0F0F0F]/95 backdrop-blur-md border-b border-white/10 py-3 sm:py-4 px-4 sm:px-6 lg:px-8 shadow-md">
+      <section id="menu-catalog" className="sticky top-[69px] z-30 bg-[#0F0F0F]/95 backdrop-blur-md border-b border-white/10 py-3 sm:py-4 px-4 sm:px-6 lg:px-8 shadow-md">
         <div className="max-w-7xl mx-auto space-y-3">
           <div className="flex flex-col md:flex-row items-center justify-between gap-3 sm:gap-4">
             {/* Category Tabs (Horizontal Scrollable) */}
@@ -385,14 +447,17 @@ export default function MenuPage() {
                 return (
                   <button
                     key={cat.id}
-                    onClick={() => setSelectedCategory(cat.id)}
-                    className={`whitespace-nowrap px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-full font-heading text-xs sm:text-sm font-semibold transition-all duration-200 cursor-pointer ${
+                    onClick={() => handleCategorySelect(cat.id)}
+                    className={`whitespace-nowrap inline-flex items-center gap-1.5 px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-full font-heading text-xs sm:text-sm font-semibold transition-all duration-200 cursor-pointer ${
                       isActive
                         ? "bg-[#FF6A24] text-white shadow-flame-sm scale-102"
                         : "bg-[#181818] text-[#F4EBD6]/80 hover:bg-white/10 hover:text-white border border-white/5"
                     }`}
                   >
-                    {cat.name}
+                    {cat.id === "Veg" && (
+                      <span className="w-2 h-2 rounded-full bg-green-400 flex-shrink-0" />
+                    )}
+                    <span>{cat.name}</span>
                   </button>
                 );
               })}
@@ -490,7 +555,7 @@ export default function MenuPage() {
             </p>
             <button
               onClick={() => {
-                setSelectedCategory("all");
+                handleCategorySelect("all");
                 setVegFilter("all");
                 setSearchQuery("");
               }}
@@ -532,17 +597,7 @@ export default function MenuPage() {
                       {/* Details */}
                       <div className="min-w-0 flex-1">
                         <div className="flex items-center gap-1.5">
-                          <div
-                            className={`w-3 h-3 border flex items-center justify-center rounded-[2px] ${
-                              item.isVeg ? "border-green-500" : "border-red-500"
-                            }`}
-                          >
-                            <div
-                              className={`w-1.5 h-1.5 rounded-full ${
-                                item.isVeg ? "bg-green-500" : "bg-red-500"
-                              }`}
-                            />
-                          </div>
+                          <VegBadge isVeg={item.isVeg} size="sm" />
                           <h3 className="font-heading font-bold text-sm text-white truncate">
                             {item.name}
                           </h3>
@@ -687,17 +742,7 @@ export default function MenuPage() {
 
                         {/* Veg / Non-Veg Indicator Badge */}
                         <div className="absolute top-3 left-3 bg-[#141414]/90 backdrop-blur-sm p-1 rounded-md border border-white/10 flex items-center justify-center">
-                          <div
-                            className={`w-3.5 h-3.5 border-2 flex items-center justify-center rounded-[2px] ${
-                              item.isVeg ? "border-green-500" : "border-red-500"
-                            }`}
-                          >
-                            <div
-                              className={`w-1.5 h-1.5 rounded-full ${
-                                item.isVeg ? "bg-green-500" : "bg-red-500"
-                              }`}
-                            />
-                          </div>
+                          <VegBadge isVeg={item.isVeg} />
                         </div>
 
                         {/* Bestseller Badge */}
@@ -715,7 +760,8 @@ export default function MenuPage() {
 
                       {/* Item Details */}
                       <div className="p-5">
-                        <div className="flex items-start justify-between gap-2">
+                        <div className="flex items-center gap-2">
+                          <VegBadge isVeg={item.isVeg} />
                           <h3 className="font-heading font-bold text-base sm:text-lg text-white group-hover:text-[#FF6A24] transition-colors leading-snug">
                             {item.name}
                           </h3>
@@ -943,9 +989,12 @@ export default function MenuPage() {
 
                     {/* Details */}
                     <div className="p-5">
-                      <h3 className="font-heading font-bold text-xl text-white">
-                        {combo.title}
-                      </h3>
+                      <div className="flex items-center gap-2">
+                        <VegBadge isVeg={combo.isVeg} />
+                        <h3 className="font-heading font-bold text-xl text-white">
+                          {combo.title}
+                        </h3>
+                      </div>
                       <p className="text-xs text-[#F4EBD6]/70 mt-1 mb-4 leading-relaxed">
                         {combo.tagline}
                       </p>
@@ -1087,7 +1136,10 @@ export default function MenuPage() {
                           className="flex items-center justify-between p-2.5 bg-white/[0.03] rounded-xl border border-white/5"
                         >
                           <div className="min-w-0 flex-1 mr-2">
-                            <p className="text-xs font-semibold text-white truncate">{item.name}</p>
+                            <div className="flex items-center gap-1.5">
+                              <VegBadge isVeg={item.isVeg} size="sm" />
+                              <p className="text-xs font-semibold text-white truncate">{item.name}</p>
+                            </div>
                             <p className="text-[11px] text-[#FF6A24] font-bold">
                               ₹{item.price} <span className="text-[10px] text-gray-400 font-normal">x {item.quantity} = ₹{item.price * item.quantity}</span>
                             </p>
@@ -1479,5 +1531,22 @@ export default function MenuPage() {
         </div>
       )}
     </div>
+  );
+}
+
+export default function MenuPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="min-h-screen bg-[#0F0F0F] text-[#F4EBD6] flex items-center justify-center">
+          <div className="flex flex-col items-center gap-3">
+            <Loader2 className="w-8 h-8 text-[#FF6A24] animate-spin" />
+            <p className="text-sm font-heading font-medium text-gray-400">Loading Flamora Menu...</p>
+          </div>
+        </div>
+      }
+    >
+      <MenuContent />
+    </Suspense>
   );
 }
