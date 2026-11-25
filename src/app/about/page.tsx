@@ -14,6 +14,16 @@ export const metadata = {
   title: "About Us | Our Story & Food Philosophy",
   description:
     "Learn about Flamora – Grill & Fry, our live fire charcoal grilling traditions, food philosophy, and commitment to hygiene and flavor in Motihari, Bihar.",
+  alternates: {
+    canonical: "/about",
+  },
+  openGraph: {
+    title: "About Us | Flamora – Grill & Fry, Motihari",
+    description:
+      "Discover Flamora's live charcoal grilling craft, 24-hour spice marinades, and commitment to fresh, hygienic food in Motihari.",
+    url: "/about",
+    images: ["/images/about-fire-grill.jpg"],
+  },
 };
 
 export default function AboutPage() {

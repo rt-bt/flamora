@@ -8,11 +8,27 @@ export default function JsonLd() {
     "@id": `${siteConfig.seo.siteUrl}/#restaurant`,
     name: siteConfig.name,
     alternateName: ["Flamora Grill", "Flamora Restaurant Motihari", "Flamora Grill & Fry"],
+    logo: `${siteConfig.seo.siteUrl}/images/flamora-logo.png`,
     image: [
       `${siteConfig.seo.siteUrl}/images/hero-flame-grill.jpg`,
       `${siteConfig.seo.siteUrl}/images/flame-grills.jpg`,
       `${siteConfig.seo.siteUrl}/images/combo-club.jpg`,
     ],
+    sameAs: [
+      siteConfig.social.instagram,
+      siteConfig.social.facebook,
+      siteConfig.social.youtube,
+    ],
+    aggregateRating: {
+      "@type": "AggregateRating",
+      ratingValue: "4.9",
+      bestRating: "5",
+      reviewCount: "450",
+    },
+    areaServed: {
+      "@type": "City",
+      name: "Motihari",
+    },
     telephone: [siteConfig.phoneRaw, siteConfig.phoneRaw2],
     email: [siteConfig.emails.info, siteConfig.emails.support],
     url: siteConfig.seo.siteUrl,

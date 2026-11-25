@@ -3,8 +3,11 @@ import Link from "next/link";
 import { siteConfig } from "@/config/siteConfig";
 
 export const metadata = {
-  title: "Privacy Policy & Terms | Flamora – Grill & Fry",
+  title: "Privacy Policy & Terms",
   description: "Terms and privacy policies for Flamora – Grill & Fry, Motihari, Bihar.",
+  alternates: {
+    canonical: "/terms",
+  },
 };
 
 export default function TermsPage() {
